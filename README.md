@@ -10,7 +10,14 @@ Allows you to choose a custom icons for folders. *(also works with files)*
 # How Work
 In the godot file system, press RMB (right click) on any folder/file you want to **iconize** and select **Custom Icon** from the menu.
 
+### File System Preview
+
 ![Preview](images/preview.png)
+
+### Menu Preview
+
+![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
+
 
 Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
 
