@@ -1,0 +1,227 @@
+[gd_scene load_steps=21 format=3 uid="uid://xar82qpavxyl"]
+
+[ext_resource type="Texture2D" uid="uid://cdofmex30bl3q" path="res://addons/fancy_folder_icons/samples/Folder.svg" id="1_wg60l"]
+[ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
+[ext_resource type="Script" uid="uid://bgqshjvc1g8kv" path="res://addons/fancy_folder_icons/scene/textures_recent.gd" id="3_5niax"]
+[ext_resource type="Script" uid="uid://up3jia7nmthd" path="res://addons/fancy_folder_icons/scene/accept.gd" id="4_3dosb"]
+[ext_resource type="Texture2D" uid="uid://bnfvsykjjsuf8" path="res://addons/fancy_folder_icons/samples/cd.png" id="4_ksxvb"]
+[ext_resource type="Script" uid="uid://b7q0u066xrji6" path="res://addons/fancy_folder_icons/scene/texture_select.gd" id="5_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://du7fun3cfkme4" path="res://addons/fancy_folder_icons/samples/database.png" id="5_nn354"]
+[ext_resource type="Texture2D" uid="uid://drkyf0wyc5ar8" path="res://addons/fancy_folder_icons/samples/heart.png" id="6_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://b3p3r3nqvqc6f" path="res://addons/fancy_folder_icons/samples/down.png" id="7_i8b63"]
+[ext_resource type="Texture2D" uid="uid://11a0a61yelrx" path="res://addons/fancy_folder_icons/samples/danger.png" id="7_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://bqgh3qddsbjk3" path="res://addons/fancy_folder_icons/samples/good.png" id="8_c2fc4"]
+[ext_resource type="Texture2D" uid="uid://ce7vxbo46fr2r" path="res://addons/fancy_folder_icons/samples/help.png" id="9_wd0cm"]
+[ext_resource type="Texture2D" uid="uid://bnly2k6dpnygx" path="res://addons/fancy_folder_icons/samples/movie.png" id="10_e2bde"]
+[ext_resource type="Texture2D" uid="uid://det6omavcow6q" path="res://addons/fancy_folder_icons/samples/music.png" id="11_swef7"]
+[ext_resource type="Texture2D" uid="uid://dm7xog3v038c7" path="res://addons/fancy_folder_icons/samples/next.png" id="12_s3hb1"]
+[ext_resource type="Texture2D" uid="uid://dmpj5ely63fu2" path="res://addons/fancy_folder_icons/samples/previous.png" id="13_ri0hx"]
+[ext_resource type="Texture2D" uid="uid://bjcddv2r36omg" path="res://addons/fancy_folder_icons/samples/save.png" id="14_rh55y"]
+
+[sub_resource type="Gradient" id="Gradient_5niax"]
+offsets = PackedFloat32Array(0.570312, 1)
+colors = PackedColorArray(0.176471, 0.294118, 0.294118, 1, 0, 0.215686, 0.215686, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5fg00"]
+gradient = SubResource("Gradient_5niax")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_465he"]
+texture = SubResource("GradientTexture2D_5fg00")
+
+[node name="IconSelector" type="Window" node_paths=PackedStringArray("texture_container", "line_edit", "file_dialog", "timer")]
+title = "Choose Icon"
+position = Vector2i(0, 36)
+size = Vector2i(520, 150)
+transient = true
+script = ExtResource("1_yibo6")
+texture_container = NodePath("PanelContainer/Container/VC/HC")
+line_edit = NodePath("PanelContainer/Container/VC/file_explorer/LineEdit")
+file_dialog = NodePath("FileDialog")
+timer = NodePath("Timer")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_465he")
+
+[node name="Container" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VC" type="VBoxContainer" parent="PanelContainer/Container"]
+layout_mode = 2
+
+[node name="Tittle" type="Label" parent="PanelContainer/Container/VC"]
+layout_mode = 2
+size_flags_vertical = 10
+text = "Custom Icon Path Selected"
+horizontal_alignment = 1
+
+[node name="file_explorer" type="HBoxContainer" parent="PanelContainer/Container/VC"]
+layout_mode = 2
+size_flags_vertical = 2
+
+[node name="explore" type="Button" parent="PanelContainer/Container/VC/file_explorer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+icon = ExtResource("1_wg60l")
+icon_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="PanelContainer/Container/VC/file_explorer"]
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Please select recent icon texture or search a new texture."
+editable = false
+
+[node name="HC" type="HBoxContainer" parent="PanelContainer/Container/VC"]
+layout_mode = 2
+script = ExtResource("3_5niax")
+
+[node name="Label" type="Label" parent="PanelContainer/Container/VC/HC"]
+layout_mode = 2
+text = "Recents:"
+
+[node name="Texture0" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("4_ksxvb")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture1" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("7_ksxvb")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture2" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("8_c2fc4")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture3" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("7_i8b63")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture4" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("6_ksxvb")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture5" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("9_wd0cm")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture6" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("10_e2bde")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture7" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("11_swef7")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture8" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("12_s3hb1")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture9" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("13_ri0hx")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture10" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("5_nn354")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+texture = ExtResource("14_rh55y")
+expand_mode = 1
+stretch_mode = 3
+script = ExtResource("5_ksxvb")
+
+[node name="container" type="HBoxContainer" parent="PanelContainer/Container/VC"]
+layout_mode = 2
+size_flags_vertical = 10
+
+[node name="accept" type="Button" parent="PanelContainer/Container/VC/container"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+disabled = true
+text = "Accept"
+script = ExtResource("4_3dosb")
+
+[node name="reset" type="Button" parent="PanelContainer/Container/VC/container"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reset Icon"
+
+[node name="exit" type="Button" parent="PanelContainer/Container/VC/container"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Exit"
+
+[node name="FileDialog" type="FileDialog" parent="."]
+title = "Open a File"
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 0
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="go_back_requested" from="." to="." method="_on_go_back_requested"]
+[connection signal="visibility_changed" from="." to="." method="_on_visibility_changed"]
+[connection signal="pressed" from="PanelContainer/Container/VC/file_explorer/explore" to="." method="_on_explore_pressed"]
+[connection signal="text_changed" from="PanelContainer/Container/VC/file_explorer/LineEdit" to="." method="_on_line_edit_text_changed"]
+[connection signal="pressed" from="PanelContainer/Container/VC/container/accept" to="PanelContainer/Container/VC/container/accept" method="_on_pressed"]
+[connection signal="pressed" from="PanelContainer/Container/VC/container/reset" to="." method="_on_reset_pressed"]
+[connection signal="pressed" from="PanelContainer/Container/VC/container/exit" to="." method="_on_exit_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
