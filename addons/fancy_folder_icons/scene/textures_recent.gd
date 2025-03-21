@@ -28,7 +28,7 @@ func enable_by_path(p : String) -> void:
 	for x : Node in get_children():
 		if x is TextureRect:
 			if null != x.texture:
-				if x.texture.resource_path == p:
+				if x.path == p:
 					x.enable()
 				else:
 					x.reset()
@@ -65,7 +65,7 @@ func _on_exit() -> void:
 		if x is TextureRect:
 			var tx : Texture2D = x.texture
 			if null != tx:
-				var path : String = tx.resource_path
+				var path : String = tx.path
 				if path.is_empty():continue
 				pack.append(path)
 	if pack.size() > 0:

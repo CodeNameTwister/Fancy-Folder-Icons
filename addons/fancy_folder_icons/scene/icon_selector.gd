@@ -14,22 +14,24 @@ extends Window
 @export var timer : Timer
 
 @warning_ignore("unused_signal")
-signal on_set_texture(new_tx : Texture)
+signal on_set_texture(new_tx : Texture, path : String)
 @warning_ignore("unused_signal")
 signal on_reset_texture()
 
 signal enable_accept_changes_button(e : bool)
 
 var _selected : Texture2D = null
+var _path : String = ""
 
 func _call_reorder(tx : Texture) -> void:
 	if texture_container:
 		texture_container.reorder(tx)
 
-func select_texture(tx: Texture2D) -> void:
+func select_texture(tx: Texture2D, path : String) -> void:
 	_selected = null
+	_path = path
 	if tx:
-		line_edit.text = tx.resource_path
+		line_edit.text = path
 		_selected = tx
 		_call_reorder(tx)
 		_on_line_edit_text_changed(line_edit.text)
@@ -37,7 +39,7 @@ func select_texture(tx: Texture2D) -> void:
 	enable_accept_changes_button.emit(false)
 
 func accept_changes() -> void:
-	on_set_texture.emit(_selected)
+	on_set_texture.emit(_selected, _path)
 	hide.call_deferred()
 
 func _ready() -> void:
@@ -85,7 +87,7 @@ func _on_file_dialog_file_selected(path: String) -> void:
 	if ResourceLoader.exists(path):
 		var r : Resource = ResourceLoader.load(path)
 		if r is Texture2D:
-			select_texture(r)
+			select_texture(r, path)
 
 func _on_timer_timeout() -> void:
 	name = "_qd"

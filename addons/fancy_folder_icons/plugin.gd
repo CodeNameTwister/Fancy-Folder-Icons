@@ -79,9 +79,9 @@ func _get_dummy_tree_node() -> void:
 	if is_instance_valid(_tchild):
 		set_physics_process(true)
 
-func _on_select_texture(tx : Texture2D, paths : PackedStringArray) -> void:
+func _on_select_texture(tx : Texture2D, texture_path : String, paths : PackedStringArray) -> void:
 	if tx.get_size() != Vector2(16, 16):
-		print("Image selected '", tx.resource_path.get_file(), "' size: ", tx.get_size(), " resized to 16x16")
+		print("Image selected '", texture_path.get_file(), "' size: ", tx.get_size(), " resized to 16x16")
 		var img : Image = tx.get_image()
 		img.resize(16, 16)
 		tx = ImageTexture.create_from_image(img)
