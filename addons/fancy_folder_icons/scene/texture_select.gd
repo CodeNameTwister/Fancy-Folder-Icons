@@ -6,7 +6,7 @@ extends TextureRect
 	#"description": "Fancy Folder Icons addon for godot 4",
 	#"license": "https://spdx.org/licenses/MIT",
 	#"name": "Twister",
-	#"version": "1.0.1"
+	#"version": "1.0.1.1"
 #}
 
 var _nxt : Color = Color.DARK_GRAY

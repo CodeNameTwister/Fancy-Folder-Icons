@@ -6,7 +6,7 @@ extends HBoxContainer
 	#"description": "Fancy Folder Icons addon for godot 4",
 	#"license": "https://spdx.org/licenses/MIT",
 	#"name": "Twister",
-	#"version": "1.0.1"
+	#"version": "1.0.1.1"
 #}
 const DOT_USER : String = "user://editor/fancy_folder_icon_recents.dat"
 
@@ -65,7 +65,7 @@ func _on_exit() -> void:
 		if x is TextureRect:
 			var tx : Texture2D = x.texture
 			if null != tx:
-				var path : String = tx.path
+				var path : String = x.path
 				if path.is_empty():continue
 				pack.append(path)
 	if pack.size() > 0:

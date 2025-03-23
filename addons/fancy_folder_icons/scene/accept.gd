@@ -6,7 +6,7 @@ extends Button
 	#"description": "Fancy Folder Icons addon for godot 4",
 	#"license": "https://spdx.org/licenses/MIT",
 	#"name": "Twister",
-	#"version": "1.0.1"
+	#"version": "1.0.1.1"
 #}
 var _nx : Color = Color.YELLOW
 var _delta : float = 0.0

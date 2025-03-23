@@ -6,7 +6,7 @@ extends EditorContextMenuPlugin
 	#"description": "Fancy Folder Icons addon for godot 4",
 	#"license": "https://spdx.org/licenses/MIT",
 	#"name": "Twister",
-	#"version": "1.0.1"
+	#"version": "1.0.1.1"
 #}
 #region godotengine_repository_icons
 const ICON : Texture = preload("res://addons/fancy_folder_icons/ZoomMore.svg")
