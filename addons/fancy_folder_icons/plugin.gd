@@ -1,13 +1,15 @@
 @tool
 extends EditorPlugin
-#{
-	#"type": "plugin",
-	#"codeRepository": "https://github.com/CodeNameTwister",
-	#"description": "Fancy Folder Icons addon for godot 4",
-	#"license": "https://spdx.org/licenses/MIT",
-	#"name": "Twister",
-	#"version": "1.0.1.1"
-#}
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#	Fancy Folder Icons
+#
+#	Folder Icons addon for addon godot 4
+#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
+#	author:	"Twister"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+const TICK_REFRESH : int = 60 #Minor do update faster when icon changes by engine.
+
 const DOT_USER : String = "user://editor/fancy_folder_icons.dat"
 
 var _buffer : Dictionary = {}
@@ -193,7 +195,7 @@ func _n(n : Node) -> bool:
 
 func _physics_process(_delta: float) -> void:
 	_tdelta += 1
-	if _tdelta > 60:
+	if _tdelta > TICK_REFRESH:
 		_tdelta = 0
 		if !is_instance_valid(_tchild):
 			_get_dummy_tree_node()
