@@ -1,12 +1,13 @@
 @tool
 extends HBoxContainer
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#	Fancy Folder Icons
-#
-#	Folder Icons addon for addon godot 4
-#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
-#	author:	"Twister"
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#{
+	#"type": "plugin",
+	#"codeRepository": "https://github.com/CodeNameTwister",
+	#"description": "Fancy Folder Icons addon for godot 4",
+	#"license": "https://spdx.org/licenses/MIT",
+	#"name": "Twister",
+	#"version": "1.0.0"
+#}
 const DOT_USER : String = "user://editor/fancy_folder_icon_recents.dat"
 
 func reorder(new_tx : Texture2D) -> void:
@@ -17,11 +18,18 @@ func reorder(new_tx : Texture2D) -> void:
 				exist = true
 				break
 	if exist:return
-	for x : Node in get_children():
-		if x is TextureRect:
-			var last : Texture2D = x.texture
-			x.texture = new_tx
-			new_tx = last
+	var last_texture : Texture2D = new_tx
+	if is_instance_valid(new_tx):
+		var last_path : String = new_tx.resource_name
+		for x : Node in get_children():
+			if x is TextureRect:
+				var _current_texture : Texture2D = x.texture
+				var _current_path : String = x.path
+				x.path = last_path
+				x.texture = last_texture
+				last_texture = _current_texture
+				last_path = _current_path
+				x.queue_redraw()
 
 func enable_by_path(p : String) -> void:
 	for x : Node in get_children():
@@ -55,6 +63,8 @@ func _setup() -> void:
 			for x : Node in get_children():
 				if x is TextureRect:
 					x.texture = append[index]
+					if x.texture:
+						x.path = x.texture.resource_path
 					index += 1
 					if index >= append.size():break
 

@@ -1,12 +1,13 @@
 @tool
 extends TextureRect
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#	Fancy Folder Icons
-#
-#	Folder Icons addon for addon godot 4
-#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
-#	author:	"Twister"
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#{
+	#"type": "plugin",
+	#"codeRepository": "https://github.com/CodeNameTwister",
+	#"description": "Fancy Folder Icons addon for godot 4",
+	#"license": "https://spdx.org/licenses/MIT",
+	#"name": "Twister",
+	#"version": "1.0.0"
+#}
 
 var _nxt : Color = Color.DARK_GRAY
 var _fps : float = 0.0
@@ -15,15 +16,20 @@ var path : String = ""
 
 func _set(property: StringName, value: Variant) -> bool:
 	if property == &"texture":
-		if null != value and value is Texture2D:
-			var new_path : String = (value as Texture2D).resource_path
-			if !new_path.is_empty():
-				path = new_path
-			if value.get_size() != Vector2(16.0, 16.0):
-				var img : Image = value.get_image()
-				img.resize(16, 16)
-				texture = ImageTexture.create_from_image(img)
-				return true
+		if null != value:
+			if value is Resource:
+				var new_path : String = (value as Resource).resource_path
+				if !new_path.is_empty():
+					path = new_path
+			
+			if value is Texture2D:
+				if value.get_size() != Vector2(16.0, 16.0):
+					var img : Image = value.get_image()
+					img.resize(16, 16)
+					texture = ImageTexture.create_from_image(img)
+					return true
+		texture = value
+		return true
 	return false
 
 func _ready() -> void:

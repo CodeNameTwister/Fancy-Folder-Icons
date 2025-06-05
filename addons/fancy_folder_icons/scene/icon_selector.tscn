@@ -171,6 +171,7 @@ stretch_mode = 3
 script = ExtResource("5_ksxvb")
 
 [node name="Texture10" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+modulate = Color(0.839956, 0.839956, 0.839956, 1)
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 texture = ExtResource("5_nn354")
@@ -179,6 +180,7 @@ stretch_mode = 3
 script = ExtResource("5_ksxvb")
 
 [node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
+modulate = Color(0.839956, 0.839956, 0.839956, 1)
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 texture = ExtResource("14_rh55y")

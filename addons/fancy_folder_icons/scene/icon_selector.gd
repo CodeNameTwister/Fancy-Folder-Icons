@@ -1,12 +1,13 @@
 @tool
 extends Window
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#	Fancy Folder Icons
-#
-#	Folder Icons addon for addon godot 4
-#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
-#	author:	"Twister"
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#{
+	#"type": "plugin",
+	#"codeRepository": "https://github.com/CodeNameTwister",
+	#"description": "Fancy Folder Icons addon for godot 4",
+	#"license": "https://spdx.org/licenses/MIT",
+	#"name": "Twister",
+	#"version": "1.0.0"
+#}
 @export var texture_container : Control
 @export var line_edit : LineEdit
 @export var file_dialog : FileDialog
@@ -38,6 +39,7 @@ func select_texture(tx: Texture2D, path : String) -> void:
 	enable_accept_changes_button.emit(false)
 
 func accept_changes() -> void:
+	_call_reorder(_selected)
 	on_set_texture.emit(_selected, _path)
 	hide.call_deferred()
 
