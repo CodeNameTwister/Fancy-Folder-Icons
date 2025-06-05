@@ -1,26 +1,29 @@
 @tool
 extends HBoxContainer
-#{
-	#"type": "plugin",
-	#"codeRepository": "https://github.com/CodeNameTwister",
-	#"description": "Fancy Folder Icons addon for godot 4",
-	#"license": "https://spdx.org/licenses/MIT",
-	#"name": "Twister",
-	#"version": "1.0.0"
-#}
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#	Fancy Folder Icons
+#
+#	Folder Icons addon for addon godot 4
+#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
+#	author:	"Twister"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 const DOT_USER : String = "user://editor/fancy_folder_icon_recents.dat"
 
 func reorder(new_tx : Texture2D) -> void:
-	var exist : bool = false
-	for x : Node in get_children():
-		if x is TextureRect:
-			if new_tx == x.texture:
-				exist = true
-				break
-	if exist:return
-	var last_texture : Texture2D = new_tx
 	if is_instance_valid(new_tx):
-		var last_path : String = new_tx.resource_name
+		var exist : bool = false
+		var last_path : String = new_tx.resource_path
+		for x : Node in get_children():
+			if x is TextureRect:
+				if x.texture != null:
+					if (!last_path.is_empty() and last_path == x.path) or new_tx == x.texture:
+						if x.texture != new_tx:
+							x.texture = new_tx
+						exist = true
+						break
+		if exist:
+			return
+		var last_texture : Texture2D = new_tx
 		for x : Node in get_children():
 			if x is TextureRect:
 				var _current_texture : Texture2D = x.texture

@@ -1,13 +1,12 @@
 @tool
 extends Window
-#{
-	#"type": "plugin",
-	#"codeRepository": "https://github.com/CodeNameTwister",
-	#"description": "Fancy Folder Icons addon for godot 4",
-	#"license": "https://spdx.org/licenses/MIT",
-	#"name": "Twister",
-	#"version": "1.0.0"
-#}
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#	Fancy Folder Icons
+#
+#	Folder Icons addon for addon godot 4
+#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
+#	author:	"Twister"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 @export var texture_container : Control
 @export var line_edit : LineEdit
 @export var file_dialog : FileDialog

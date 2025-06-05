@@ -1,13 +1,12 @@
 @tool
 extends Button
-#{
-	#"type": "plugin",
-	#"codeRepository": "https://github.com/CodeNameTwister",
-	#"description": "Fancy Folder Icons addon for godot 4",
-	#"license": "https://spdx.org/licenses/MIT",
-	#"name": "Twister",
-	#"version": "1.0.0"
-#}
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#	Fancy Folder Icons
+#
+#	Folder Icons addon for addon godot 4
+#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
+#	author:	"Twister"
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 var _nx : Color = Color.YELLOW
 var _delta : float = 0.0
 
