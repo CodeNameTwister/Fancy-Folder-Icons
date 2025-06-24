@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://xar82qpavxyl"]
+[gd_scene load_steps=20 format=3 uid="uid://xar82qpavxyl"]
 
 [ext_resource type="Texture2D" uid="uid://cdofmex30bl3q" path="res://addons/fancy_folder_icons/samples/Folder.svg" id="1_wg60l"]
 [ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
@@ -16,7 +16,6 @@
 [ext_resource type="Texture2D" uid="uid://det6omavcow6q" path="res://addons/fancy_folder_icons/samples/music.png" id="11_swef7"]
 [ext_resource type="Texture2D" uid="uid://dm7xog3v038c7" path="res://addons/fancy_folder_icons/samples/next.png" id="12_s3hb1"]
 [ext_resource type="Texture2D" uid="uid://dmpj5ely63fu2" path="res://addons/fancy_folder_icons/samples/previous.png" id="13_ri0hx"]
-[ext_resource type="Texture2D" uid="uid://bjcddv2r36omg" path="res://addons/fancy_folder_icons/samples/save.png" id="14_rh55y"]
 
 [sub_resource type="Gradient" id="Gradient_5niax"]
 offsets = PackedFloat32Array(0.570312, 1)
@@ -68,7 +67,7 @@ horizontal_alignment = 1
 
 [node name="file_explorer" type="HBoxContainer" parent="PanelContainer/Container/VC"]
 layout_mode = 2
-size_flags_vertical = 2
+size_flags_vertical = 8
 
 [node name="explore" type="Button" parent="PanelContainer/Container/VC/file_explorer"]
 custom_minimum_size = Vector2(32, 32)
@@ -84,6 +83,8 @@ editable = false
 
 [node name="HC" type="HBoxContainer" parent="PanelContainer/Container/VC"]
 layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 0
 script = ExtResource("3_5niax")
 
 [node name="Label" type="Label" parent="PanelContainer/Container/VC/HC"]
@@ -171,7 +172,6 @@ stretch_mode = 3
 script = ExtResource("5_ksxvb")
 
 [node name="Texture10" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-modulate = Color(0.839956, 0.839956, 0.839956, 1)
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
 texture = ExtResource("5_nn354")
@@ -180,10 +180,9 @@ stretch_mode = 3
 script = ExtResource("5_ksxvb")
 
 [node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-modulate = Color(0.839956, 0.839956, 0.839956, 1)
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-texture = ExtResource("14_rh55y")
+texture = ExtResource("5_nn354")
 expand_mode = 1
 stretch_mode = 3
 script = ExtResource("5_ksxvb")

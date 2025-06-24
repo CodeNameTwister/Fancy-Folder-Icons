@@ -22,10 +22,14 @@ func _set(property: StringName, value: Variant) -> bool:
 					path = new_path
 			
 			if value is Texture2D:
-				if value.get_size() != Vector2(16.0, 16.0):
+				var image_size : Vector2 = Vector2(12.0, 12.0)
+				if owner and owner.has_method(&"get_icon_size"):
+					image_size = owner.call(&"get_icon_size")
+				if value.get_size() != image_size:
 					var img : Image = value.get_image()
-					img.resize(16, 16)
+					img.resize(int(image_size.x), int(image_size.y), Image.INTERPOLATE_NEAREST)
 					texture = ImageTexture.create_from_image(img)
+					#texture.resource_path = value.resource_path #No Cache Override
 					return true
 		if path.is_empty():
 			path = str(get_index())

@@ -19,6 +19,68 @@ var _popup : Window = null
 var _tchild : TreeItem = null
 var _tdelta : int = 0
 
+var _docky : Docky = null
+
+var size : Vector2 = Vector2(12.0, 12.0)
+
+func get_buffer() -> Dictionary:
+	return _buffer
+
+class Docky extends RefCounted:
+	var drawing : bool = false
+	var dock : ItemList = null
+	
+	var plugin : Object = null
+	
+	func _init(set_plugin : Object) -> void:
+		plugin = set_plugin
+	
+	func update_icons() -> void:
+		if !dock:
+			return
+		var buffer : Dictionary = plugin.get_buffer()
+		var mt : Dictionary = {}
+		
+		for x : int in dock.item_count:
+			var data : String = str(dock.get_item_metadata(x))
+			mt[data] = [x, 0]
+		
+		for key : String in buffer.keys():
+			for m : String in mt.keys():
+				if m == key:
+					mt[m][1] = m.length() + 1
+					dock.set_item_icon(mt[m][0], buffer[key])
+					
+				elif m.get_extension().is_empty() and m.begins_with(key):
+					var l : int = key.length()
+					if mt[m][1] < l:
+						mt[m][1] = l
+						dock.set_item_icon(mt[m][0], buffer[key])
+		_dispose.call_deferred()
+		return
+		
+	func _dispose() -> void:
+		var o : Variant = self
+		for __ : int in range(2):
+			await Engine.get_main_loop().process_frame
+		if is_instance_valid(o):
+			o.set_deferred(&"drawing", false)
+	
+	func _on_change() -> void:
+		if drawing:
+			return
+		drawing = true
+		update_icons.call_deferred()
+	
+	func update(new_dock : ItemList) -> void:
+		dock = new_dock
+		
+		if !dock.draw.is_connected(_on_change):
+			dock.draw.connect(_on_change)
+		
+		if dock.item_count > 0:
+			var icon : Texture2D = dock.get_item_icon(0)
+
 func _setup() -> void:
 	var dir : String = DOT_USER.get_base_dir()
 	if !DirAccess.dir_exists_absolute(dir):
@@ -54,7 +116,19 @@ func update() -> void:
 	while null != item and item.get_metadata(0) != "res://":
 		item = item.get_next()
 
+	var dock : ItemList = get_docky()
+	if dock:
+		if !is_instance_valid(_docky):
+			_docky = Docky.new(self)
+		_docky.update(dock)
+	elif is_instance_valid(_docky):
+		_docky = null
+
 	_explore(item)
+	
+	if is_instance_valid(_docky):
+		_docky.update_icons()
+		
 	set_deferred(&"_busy", false)
 
 func _explore(item : TreeItem, texture : Texture2D = null, as_root : bool = true) -> void:
@@ -76,13 +150,16 @@ func _get_dummy_tree_node() -> void:
 	if root:
 		_tchild = root.get_first_child()
 	if is_instance_valid(_tchild):
+		var icon_size : Texture2D = _tchild.get_icon(0)
+		if icon_size:
+			size = icon_size.get_size()
 		set_physics_process(true)
 
 func _on_select_texture(tx : Texture2D, texture_path : String, paths : PackedStringArray) -> void:
-	if tx.get_size() != Vector2(16, 16):
-		print("Image selected '", texture_path.get_file(), "' size: ", tx.get_size(), " resized to 16x16")
+	if tx.get_size() != size:
+		print("Image selected '", texture_path.get_file(), "' size: ", tx.get_size(), " resized to ", size.x, "x", size.y)
 		var img : Image = tx.get_image()
-		img.resize(16, 16)
+		img.resize(size.x, size.y)
 		tx = ImageTexture.create_from_image(img)
 	for p : String in paths:
 		_buffer[p] = tx
@@ -101,6 +178,7 @@ func _on_iconize(paths : PackedStringArray) -> void:
 	if pop == null:
 		pop = (ResourceLoader.load(PATH) as PackedScene).instantiate()
 		pop.name = "_POP_ICONIZER_"
+		pop.plugin = self
 		add_child(pop)
 	if pop.on_set_texture.is_connected(_on_select_texture):
 		pop.on_set_texture.disconnect(_on_select_texture)
@@ -109,6 +187,14 @@ func _on_iconize(paths : PackedStringArray) -> void:
 	pop.on_set_texture.connect(_on_select_texture.bind(paths))
 	pop.on_reset_texture.connect(_on_reset_texture.bind(paths))
 	pop.popup_centered()
+
+func get_docky() -> ItemList:
+	var out : ItemList = null
+	var dock : Control = EditorInterface.get_file_system_dock()
+	if dock:
+		out = dock.find_child("*FileSystemList*", true, false)
+	return out
+	
 
 func _ready() -> void:
 	set_physics_process(false)
@@ -134,6 +220,10 @@ func _enter_tree() -> void:
 
 	_menu_service = ResourceLoader.load("res://addons/fancy_folder_icons/menu_fancy.gd").new()
 	_menu_service.iconize_paths.connect(_on_iconize)
+	
+	var vp : Viewport = Engine.get_main_loop().root
+	vp.focus_entered.connect(_on_wnd)
+	vp.focus_exited.connect(_out_wnd)
 
 func _exit_tree() -> void:
 	if is_instance_valid(_popup):
@@ -173,6 +263,13 @@ func _exit_tree() -> void:
 
 	if !fs.is_queued_for_deletion():
 		fs.filesystem_changed.emit()
+		
+	var vp : Viewport = Engine.get_main_loop().root
+	vp.focus_entered.disconnect(_on_wnd)
+	vp.focus_exited.disconnect(_out_wnd)
+	
+func _on_wnd() -> void:set_physics_process(true)
+func _out_wnd() -> void:set_physics_process(false)
 
 #region rescue_fav
 func _n(n : Node) -> bool:

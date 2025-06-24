@@ -22,6 +22,13 @@ signal enable_accept_changes_button(e : bool)
 var _selected : Texture2D = null
 var _path : String = ""
 
+var plugin : Object = null
+
+func get_icon_size() -> Vector2:
+	if is_instance_valid(plugin):
+		return plugin.size
+	return Vector2(12.0, 12.0)
+
 func _call_reorder(tx : Texture) -> void:
 	if texture_container:
 		texture_container.reorder(tx)
