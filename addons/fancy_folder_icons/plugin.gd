@@ -116,11 +116,14 @@ func update() -> void:
 	while null != item and item.get_metadata(0) != "res://":
 		item = item.get_next()
 
-	var dock : ItemList = get_docky()
-	if dock:
-		if !is_instance_valid(_docky):
-			_docky = Docky.new(self)
-		_docky.update(dock)
+	if _enable_icons_on_split:
+		var dock : ItemList = get_docky()
+		if dock:
+			if !is_instance_valid(_docky):
+				_docky = Docky.new(self)
+			_docky.update(dock)
+		elif is_instance_valid(_docky):
+			_docky = null
 	elif is_instance_valid(_docky):
 		_docky = null
 
@@ -215,6 +218,8 @@ func _ready() -> void:
 
 	_def_update()
 
+
+var _enable_icons_on_split : bool = true
 func _enter_tree() -> void:
 	_setup()
 
@@ -224,7 +229,22 @@ func _enter_tree() -> void:
 	var vp : Viewport = Engine.get_main_loop().root
 	vp.focus_entered.connect(_on_wnd)
 	vp.focus_exited.connect(_out_wnd)
+	
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		editor.settings_changed.connect(_on_change_settings)
+		if !editor.has_setting("plugin/fancy_folder_icons/enable_icons_on_split"):
+			editor.set_setting("plugin/fancy_folder_icons/enable_icons_on_split", true)
+		else:
+			_enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
 
+func _on_change_settings() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var settings : PackedStringArray = editor.get_changed_settings()
+		if "plugin/fancy_folder_icons/enable_icons_on_split" in settings:
+			_enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
+			
 func _exit_tree() -> void:
 	if is_instance_valid(_popup):
 		_popup.queue_free()
@@ -246,6 +266,11 @@ func _exit_tree() -> void:
 		dock.folder_color_changed.disconnect(_def_update)
 	if fs.filesystem_changed.is_connected(_def_update):
 		fs.filesystem_changed.disconnect(_def_update)
+
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		editor.settings_changed.disconnect(_on_change_settings)
+	
 
 	#region user_dat
 	var cfg : ConfigFile = ConfigFile.new()
