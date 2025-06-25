@@ -18,6 +18,12 @@ In the godot file system, press RMB (right click) on any folder/file you want to
 
 ![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
 
+# Special Thanks 📜 
+This section lists users who have contributed to improving the quality of this project.
+
+[@Lerpwave](https://github.com/Lerpwave)
+
+#
 
 Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
 
