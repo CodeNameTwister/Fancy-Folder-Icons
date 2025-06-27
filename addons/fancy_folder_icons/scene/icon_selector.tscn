@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://xar82qpavxyl"]
+[gd_scene load_steps=21 format=3 uid="uid://xar82qpavxyl"]
 
 [ext_resource type="Texture2D" uid="uid://cdofmex30bl3q" path="res://addons/fancy_folder_icons/samples/Folder.svg" id="1_wg60l"]
 [ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://det6omavcow6q" path="res://addons/fancy_folder_icons/samples/music.png" id="11_swef7"]
 [ext_resource type="Texture2D" uid="uid://dm7xog3v038c7" path="res://addons/fancy_folder_icons/samples/next.png" id="12_s3hb1"]
 [ext_resource type="Texture2D" uid="uid://dmpj5ely63fu2" path="res://addons/fancy_folder_icons/samples/previous.png" id="13_ri0hx"]
+[ext_resource type="Texture2D" uid="uid://camm6l6pbejlj" path="res://addons/fancy_folder_icons/samples/delete.png" id="16_ksxvb"]
 
 [sub_resource type="Gradient" id="Gradient_5niax"]
 offsets = PackedFloat32Array(0.570312, 1)
@@ -182,7 +183,7 @@ script = ExtResource("5_ksxvb")
 [node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
-texture = ExtResource("5_nn354")
+texture = ExtResource("16_ksxvb")
 expand_mode = 1
 stretch_mode = 3
 script = ExtResource("5_ksxvb")

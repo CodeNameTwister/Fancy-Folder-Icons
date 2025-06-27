@@ -40,10 +40,16 @@ func _set(property: StringName, value: Variant) -> bool:
 func _ready() -> void:
 	set_process(false)
 	gui_input.connect(_on_gui)
+	if texture.resource_path == null:
+		texture = null
+	else:
+		path = texture.resource_path
 
 func _on_gui(i : InputEvent) -> void:
 	if i is InputEventMouseButton:
 		if i.button_index == 1 and i.pressed:
+			if texture == null:
+				return
 			owner.select_texture(texture, path)
 
 func enable() -> void:

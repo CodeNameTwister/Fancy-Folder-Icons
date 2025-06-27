@@ -91,6 +91,13 @@ func _setup() -> void:
 		if OK != cfg.load(DOT_USER):return
 		_buffer = cfg.get_value("DAT", "PTH", {})
 
+func _quick_save() -> void:
+	if FileAccess.file_exists(DOT_USER):
+		var cfg : ConfigFile = ConfigFile.new()
+		if OK != cfg.load(DOT_USER):return
+		cfg.set_value("DAT", "PTH", _buffer)
+		cfg = null
+
 #region callbacks
 func _moved_callback(a : String, b : String ) -> void:
 	if a != b:
