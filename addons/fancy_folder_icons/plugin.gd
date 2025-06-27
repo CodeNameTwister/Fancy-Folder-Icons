@@ -80,8 +80,8 @@ class Docky extends RefCounted:
 		if !dock.draw.is_connected(_on_change):
 			dock.draw.connect(_on_change)
 		
-		if dock.item_count > 0:
-			var icon : Texture2D = dock.get_item_icon(0)
+		#if dock.item_count > 0:
+			#var icon : Texture2D = dock.get_item_icon(0)
 
 func _setup() -> void:
 	var dir : String = DOT_USER.get_base_dir()
@@ -102,11 +102,11 @@ func _quick_save() -> void:
 	set_deferred(&"_is_saving" , false)
 
 #region callbacks
-func _moved_callback(a : String, b : String ) -> void:
-	if a != b:
-		if _buffer.has(a):
-			_buffer[b] = _buffer[a]
-			_buffer.erase(a)
+func _moved_callback(a0 : String, b0 : String ) -> void:
+	if a0 != b0:
+		if _buffer.has(a0):
+			_buffer[b0] = _buffer[a0]
+			_buffer.erase(a0)
 			save_queue()
 
 func _remove_callback(path : String) -> void:
@@ -174,7 +174,7 @@ func _on_select_texture(tx : Texture2D, texture_path : String, paths : PackedStr
 	if tx.get_size() != size:
 		print("Image selected '", texture_path.get_file(), "' size: ", tx.get_size(), " resized to ", size.x, "x", size.y)
 		var img : Image = tx.get_image()
-		img.resize(size.x, size.y)
+		img.resize(int(size.x), int(size.y))
 		tx = ImageTexture.create_from_image(img)
 	for p : String in paths:
 		_buffer[p] = tx
