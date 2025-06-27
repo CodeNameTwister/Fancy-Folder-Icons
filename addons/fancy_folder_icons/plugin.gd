@@ -23,6 +23,8 @@ var _docky : Docky = null
 
 var size : Vector2 = Vector2(12.0, 12.0)
 
+var _is_saving : bool = false
+
 func get_buffer() -> Dictionary:
 	return _buffer
 
@@ -97,6 +99,7 @@ func _quick_save() -> void:
 		if OK != cfg.load(DOT_USER):return
 		cfg.set_value("DAT", "PTH", _buffer)
 		cfg = null
+	set_deferred(&"_is_saving" , false)
 
 #region callbacks
 func _moved_callback(a : String, b : String ) -> void:
@@ -104,10 +107,12 @@ func _moved_callback(a : String, b : String ) -> void:
 		if _buffer.has(a):
 			_buffer[b] = _buffer[a]
 			_buffer.erase(a)
+			save_queue()
 
 func _remove_callback(path : String) -> void:
 	if _buffer.has(path):
 		_buffer.erase(path)
+		save_queue()
 #endregion
 
 func _def_update() -> void:
@@ -174,6 +179,13 @@ func _on_select_texture(tx : Texture2D, texture_path : String, paths : PackedStr
 	for p : String in paths:
 		_buffer[p] = tx
 	_def_update()
+	save_queue()
+
+func save_queue() -> void:
+	if _is_saving:
+		return
+	_is_saving = true
+	_quick_save.call_deferred()
 
 func _on_reset_texture(paths : PackedStringArray) -> void:
 	for p : String in paths:

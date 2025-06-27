@@ -65,8 +65,8 @@ func _setup() -> void:
 			var index : int = 0
 			for x : Node in get_children():
 				if x is TextureRect:
-					var tx : ImageTexture = append[index]
-					if tx:
+					var tx : Variant = append[index]
+					if tx is Texture2D:
 						x.texture = tx
 						x.path = tx.resource_path
 					index += 1
