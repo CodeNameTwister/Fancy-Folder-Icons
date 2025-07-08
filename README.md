@@ -46,5 +46,5 @@ if one replace rule fails, if the file is not found, to match the errors are sav
 
 ## todo
 
-- add ui for changing the rules
-- add ui for changing the settings
+- add suport for more than one ** per match rule
+- add suport for test* to mean folder starting with test

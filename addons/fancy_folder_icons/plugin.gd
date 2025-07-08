@@ -8,6 +8,10 @@ extends EditorPlugin
 #	author:	"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 const DOT_USER: String = "user://editor/fancy_folder_icons.dat"
+const RULES_FILE = "user://fancy_folder_icons_rules.json"
+var largeIconCache := {}
+var smallIconCache := {}
+var rules: Dictionary = {}
 
 var _buffer: Dictionary = {}
 var _tree: Tree = null
@@ -25,18 +29,12 @@ var size: Vector2 = Vector2(12.0, 12.0)
 
 var _is_saving: bool = false
 
-const settings := {
-  "textureAppliesToNestedFolders": false
-}
-
+var textureAppliesToNestedFolders := true
 func get_buffer() -> Dictionary:
-  _buffer['res://scenes/blocks/**/images/'] = "res://scenes/blocks/image.png"
-  _buffer['res://scenes/blocks/*/'] = "res://scenes/blocks/$1/images/editorBar.png||res://scenes/blocks/$1/images/1.png||res://scenes/blocks/$1/images/unpressed.png||res://scenes/blocks/$1/images/ghost.png"
-  _buffer['res://scenes/blocks/conveyer/images/arrows/'] = "res://scenes/blocks/conveyer/images/editorBar.png"
-  _buffer['res://scenes/blocks/spark block/'] = "res://scenes/blocks/spark block/clockwise/images/spark.png"
-  _buffer['res://scenes/blocks/spark block/clockwise/'] = "res://scenes/blocks/spark block/clockwise/images/1.png"
-  _buffer['res://scenes/blocks/spark block/counterClockwise/'] = "res://scenes/blocks/spark block/counterClockwise/images/1.png"
-  return _buffer
+  var buffer = _buffer
+  for key in rules:
+    buffer[key] = rules[key]
+  return buffer
 
 class Docky extends RefCounted:
   var drawing: bool = false
@@ -66,12 +64,16 @@ class Docky extends RefCounted:
             dock.set_item_icon(mt[m][0], buffer[key])
             break
           else:
+            var tx: Texture2D
             var texture_path = plugin.matches(key, m, buffer[key])
-            var tx: Texture2D = load(texture_path)
-            var img: Image = tx.get_image()
-            mt[m][1] = m.length() + 1
-            img.resize(int(plugin.size.x) * 4, int(plugin.size.y) * 4)
-            tx = ImageTexture.create_from_image(img)
+            if texture_path in plugin.largeIconCache:
+              tx = plugin.largeIconCache[texture_path]
+            else:
+              tx = load(texture_path)
+              var img: Image = tx.get_image()
+              mt[m][1] = m.length() + 1
+              img.resize(int(plugin.size.x) * 4, int(plugin.size.y) * 4)
+              tx = ImageTexture.create_from_image(img)
             dock.set_item_icon(mt[m][0], tx)
             break
     _dispose.call_deferred()
@@ -135,7 +137,7 @@ func _def_update() -> void:
   update.call_deferred()
 
 func update() -> void:
-  if _buffer.size() == 0: return
+  # if _buffer.size() == 0: return
   if _busy: return
   _busy = true
   var root: TreeItem = _tree.get_root()
@@ -217,23 +219,29 @@ func matches(key, item, retval):
   return false
 var errQueue = []
 func _explore(item: TreeItem, texture: Texture2D = null, as_root: bool = true) -> void:
+  var buffer = get_buffer()
   var meta: String = str(item.get_metadata(0))
-  if _buffer.has(meta) and _buffer[meta] is Texture2D:
-    texture = _buffer[meta]
+  if buffer.has(meta) and buffer[meta] is Texture2D:
+    texture = buffer[meta]
     as_root = true
-  if !settings.textureAppliesToNestedFolders:
+  if !textureAppliesToNestedFolders:
     texture = null
   errQueue = []
-  for key in _buffer:
-    if matches(key, meta, _buffer[key]):
-      if _buffer[key] is ImageTexture:
-        texture = _buffer[key]
+  for key in buffer:
+    if matches(key, meta, buffer[key]):
+      if buffer[key] is ImageTexture:
+        texture = buffer[key]
         continue
-      var texture_path = matches(key, meta, _buffer[key])
-      var tx: Texture2D = load(texture_path)
-      var img: Image = tx.get_image()
-      img.resize(int(size.x), int(size.y))
-      tx = ImageTexture.create_from_image(img)
+
+      var tx: Texture2D
+      var texture_path = matches(key, meta, buffer[key])
+      if texture_path in smallIconCache:
+        tx = smallIconCache[texture_path]
+      else:
+        tx = load(texture_path)
+        var img: Image = tx.get_image()
+        img.resize(int(size.x), int(size.y))
+        tx = ImageTexture.create_from_image(img)
       texture = tx
       errQueue = []
       break
@@ -324,8 +332,9 @@ func _ready() -> void:
   fs.filesystem_changed.connect(_def_update)
 
   _def_update()
-
+  
 var _enable_icons_on_split: bool = true
+
 func _enter_tree() -> void:
   _setup()
 
@@ -343,6 +352,30 @@ func _enter_tree() -> void:
       editor.set_setting("plugin/fancy_folder_icons/enable_icons_on_split", true)
     else:
       _enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
+  ProjectSettings.settings_changed.connect(_on_change_settings)
+  var temp = JSON.parse_string(FileAccess.get_file_as_string(RULES_FILE))
+  if FileAccess.file_exists(RULES_FILE):
+    if temp and "rules" in temp:
+      rules = temp.rules
+  if FileAccess.file_exists(RULES_FILE):
+    if temp and "textureAppliesToNestedFolders" in temp:
+      textureAppliesToNestedFolders = temp.textureAppliesToNestedFolders
+  ProjectSettings.set_setting("plugin/fancy_folder_icons/rules", rules)
+  ProjectSettings.set_setting("plugin/fancy_folder_icons/textureAppliesToNestedFolders", textureAppliesToNestedFolders)
+  PROPERTY_HINT_TYPE_STRING
+  var property_info = {
+    "name": "plugin/fancy_folder_icons/rules",
+    "type": TYPE_DICTIONARY,
+    "hint": PROPERTY_HINT_DICTIONARY_TYPE,
+    "hint_string": (
+      "%d/%d:*" % [TYPE_STRING, PROPERTY_HINT_DIR]
+      +";" +
+      "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE_PATH, "*.png,*.jpg,*.jpeg,*.gif,*.svg,*.ico,*.bmp,*.tga,*.webp"]
+    )
+  }
+  log.pp(property_info.hint_string)
+
+  ProjectSettings.add_property_info(property_info)
 
 func _on_change_settings() -> void:
   var editor: EditorSettings = EditorInterface.get_editor_settings()
@@ -350,6 +383,9 @@ func _on_change_settings() -> void:
     var settings: PackedStringArray = editor.get_changed_settings()
     if "plugin/fancy_folder_icons/enable_icons_on_split" in settings:
       _enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
+  rules = ProjectSettings.get_setting("plugin/fancy_folder_icons/rules", {})
+  textureAppliesToNestedFolders = ProjectSettings.get_setting("plugin/fancy_folder_icons/textureAppliesToNestedFolders", true)
+  FileAccess.open(RULES_FILE, FileAccess.WRITE_READ).store_string(JSON.stringify({"rules": rules, "textureAppliesToNestedFolders": textureAppliesToNestedFolders}, "  "))
       
 func _exit_tree() -> void:
   if is_instance_valid(_popup):
