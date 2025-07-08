@@ -4,13 +4,41 @@ Custom Folder Icons Addon For Godot 4
 
 Allows you to choose a custom icons for folders. _(also works with files)_
 
-## Usage
+[![Godot Engine 4.3](https://img.shields.io/badge/Godot_Engine-4.x-blue)](https://godotengine.org/) ![ToolHack](https://img.shields.io/badge/Tool-Addon-green) ![Copyrights License](https://img.shields.io/badge/License-MIT-blue)
+
+![Icon](images/folder.png)
+
+# How Work
+
+In the godot file system, press RMB (right click) on any folder/file you want to **iconize** and select **Custom Icon** from the menu.
+
+### File System Preview
+
+![Preview](images/preview.png)
+
+### Menu Preview
+
+![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
+
+# Special Thanks 📜
+
+This section lists users who have contributed to improving the quality of this project.
+
+[@Lerpwave](https://github.com/Lerpwave)
+
+#
+
+Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
+
+[godot engine]: https://godotengine.org/
 
 instead of having to set a custom icon for each folder indevidually, the folders will be set using rules.
 
 ### Rules instructions
 
 for match rules you can have the path be matched my string, or \* for wildcard which matches any folder, or \*\* for wildcard that matches any amount of folders in a row.
+
+rules can be changed at project settings plugin/fancy_folder_icons/rules
 
 ## eg:
 
@@ -46,5 +74,5 @@ if one replace rule fails, if the file is not found, to match the errors are sav
 
 ## todo
 
-- add suport for more than one ** per match rule
-- add suport for test* to mean folder starting with test
+- add support for more than one \*\* per match rule
+- add support for test\* to mean folder starting with test
