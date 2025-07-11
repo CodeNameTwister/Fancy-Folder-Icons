@@ -376,7 +376,7 @@ func _enter_tree() -> void:
       "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE_PATH, "*.png,*.jpg,*.jpeg,*.gif,*.svg,*.bmp,*.tga,*.webp"]
     )
   }
-  log.pp(property_info.hint_string)
+  # log.pp(property_info.hint_string)
 
   ProjectSettings.add_property_info(property_info)
 
