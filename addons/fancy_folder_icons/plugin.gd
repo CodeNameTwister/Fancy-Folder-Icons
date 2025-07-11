@@ -1,11 +1,11 @@
 @tool
 extends EditorPlugin
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-#	Fancy Folder Icons
+#    Fancy Folder Icons
 #
-#	Folder Icons addon for addon godot 4
-#	https://github.com/CodeNameTwister/Fancy-Folder-Icons
-#	author:	"Twister"
+#    Folder Icons addon for addon godot 4
+#    https://github.com/CodeNameTwister/Fancy-Folder-Icons
+#    author:    "Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 const DOT_USER: String = "user://editor/fancy_folder_icons.dat"
 const RULES_FILE = "user://fancy_folder_icons_rules.json"
@@ -206,11 +206,14 @@ func matches(key, item, retval):
   for pospath in (retval.split("||") as Array).map(func(e): return e.split("/")):
     newRetVal.append([])
     for part in pospath:
+      var found = false
       for ii in range(0, len(itemrep)):
         if part == "$" + str(ii + 1):
           newRetVal[len(newRetVal) - 1].append(itemrep[ii])
-        else:
-          newRetVal[len(newRetVal) - 1].append(part)
+          found = true
+          break
+      if !found:
+        newRetVal[len(newRetVal) - 1].append(part)
   newRetVal = newRetVal.map(func(e): return "/".join(e))
   for path in newRetVal:
     if FileAccess.file_exists(path):
@@ -370,7 +373,7 @@ func _enter_tree() -> void:
     "hint_string": (
       "%d/%d:*" % [TYPE_STRING, PROPERTY_HINT_DIR]
       +";" +
-      "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE_PATH, "*.png,*.jpg,*.jpeg,*.gif,*.svg,*.ico,*.bmp,*.tga,*.webp"]
+      "%d/%d:%s" % [TYPE_STRING, PROPERTY_HINT_FILE_PATH, "*.png,*.jpg,*.jpeg,*.gif,*.svg,*.bmp,*.tga,*.webp"]
     )
   }
   log.pp(property_info.hint_string)
