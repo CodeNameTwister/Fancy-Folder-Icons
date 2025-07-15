@@ -48,7 +48,7 @@ func _init() -> void:
 				editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
 			else:
 				DOT_USER = new_path
-		editor.changed.connect(_on_changes)
+		editor.settings_changed.connect(_on_changes)
 
 func _setup(load_buffer : bool = true) -> void:
 	var dir : String = DOT_USER.get_base_dir()
@@ -119,67 +119,69 @@ func _def_update() -> void:
 	set_process(true)
 
 func _update_draw(x : Variant) -> void:
-	for __ : int in range(1):
+	for __ : int in range(2):
 		var tree : SceneTree = get_tree()
 		if !is_instance_valid(tree):
 			return
 		await tree.process_frame
-		
-	if is_instance_valid(x):
-		if x is Tree:
-			var _root: TreeItem = x.get_root()
-			if _root != null:
-				var child : TreeItem = _root.get_first_child()
-				if  child == null:
-					return
-				if child == null or child.get_custom_color(0) == Color.GRAY:
-					return
-				child.set_custom_color(0, Color.GRAY)
-				var value : Variant = _root.get_metadata(0)
-				if value == null:
-					if child:
-						value = child.get_metadata(0)
-						if value is String and (value == "Favorites" or DirAccess.dir_exists_absolute(value) or FileAccess.file_exists(value)):
+			
+		if is_instance_valid(x):
+			if x is Tree:
+				var _root: TreeItem = x.get_root()
+				if _root != null:
+					var child : TreeItem = _root.get_first_child()
+					if child == null or child.get_custom_color(0) == Color.GRAY:
+						return
+					child.set_custom_color(0, Color.GRAY)
+					var value : Variant = _root.get_metadata(0)
+					if value == null:
+						if child:
+							value = child.get_metadata(0)
+							if value is String and (value == "Favorites" or DirAccess.dir_exists_absolute(value) or FileAccess.file_exists(value)):
+								_explore(_root)
+								return
+					elif value is String:
+						if FileAccess.file_exists(value):
 							_explore(_root)
-							return
-				elif value is String:
-					if FileAccess.file_exists(value):
-						_explore(_root)
-				elif value is RefCounted:
-					if value.get(&"_saved_path") is String:
-						_tabby_explore(_root)
-		elif x is ItemList:
-			if x.item_count > 0:
-				var color : Color = x.get_item_custom_fg_color(0)
-				if color != Color.GRAY:
-					x.set_item_custom_fg_color(0, Color.GRAY)
-					var m : Variant = x.get_item_metadata(0)
-					if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
-						for y : int in x.item_count:
-							var path : Variant = x.get_item_metadata(y)
-							if path is String:
-								if _buffer.has(path):
-									var texture : Texture2D = _get_item_texture(_buffer[path])
-									x.set_item_icon(y, texture)
-								elif path.get_extension().is_empty():
-									path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+					elif value is RefCounted:
+						if value.get(&"_saved_path") is String:
+							_tabby_explore(_root)
+			elif x is ItemList:
+				if x.item_count > 0:
+					var color : Color = x.get_item_custom_fg_color(0)
+					if color != Color.GRAY:
+						x.set_item_custom_fg_color(0, Color.GRAY)
+						var m : Variant = x.get_item_metadata(0)
+						if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
+							for y : int in x.item_count:
+								var path : Variant = x.get_item_metadata(y)
+								if path is String:
+									if _buffer.has(path):
+										if x.max_columns == 1:
+											x.set_item_icon(y, _buffer[path])
+										else:
+											x.set_item_icon(y, _get_item_texture(_buffer[path]))
+									elif path.get_extension().is_empty():
+										path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+										if _buffer.has(path):
+											if x.max_columns == 1:
+												x.set_item_icon(y, _buffer[path])
+											else:
+												x.set_item_icon(y, _get_item_texture(_buffer[path]))
+						elif m is Dictionary and m.has("path"):
+							for y : int in x.item_count:
+								var data : Variant = x.get_item_metadata(y)
+								if data is Dictionary and data.has("path"):
+									var path : String = data["path"]
+									if path.get_extension().is_empty():
+										path = path.path_join("")
 									if _buffer.has(path):
 										var texture : Texture2D = _get_item_texture(_buffer[path])
 										x.set_item_icon(y, texture)
-					elif m is Dictionary and m.has("path"):
-						for y : int in x.item_count:
-							var data : Variant = x.get_item_metadata(y)
-							if data is Dictionary and data.has("path"):
-								var path : String = data["path"]
-								if path.get_extension().is_empty():
-									path = path.path_join("")
-								if _buffer.has(path):
-									var texture : Texture2D = _get_item_texture(_buffer[path])
-									x.set_item_icon(y, texture)
-					else:
-						if x is Control:
-							if x.draw.is_connected(_update_draw):
-								x.draw.disconnect(_update_draw)
+						else:
+							if x is Control:
+								if x.draw.is_connected(_update_draw):
+									x.draw.disconnect(_update_draw)
 
 func update() -> void:
 	if _busy or _buffer.size() == 0 or _tree == null:
@@ -194,9 +196,8 @@ func update() -> void:
 			var _root: TreeItem = x.get_root()
 			if _root != null:
 				var child : TreeItem = _root.get_first_child()
-				if child == null or child.get_custom_color(0) == Color.GRAY:
+				if child == null:
 					continue
-				child.set_custom_color(0, Color.GRAY)
 				var value : Variant = _root.get_metadata(0)
 				if value == null:
 					if child:
@@ -204,72 +205,51 @@ func update() -> void:
 						if value is String and (value == "Favorites" or DirAccess.dir_exists_absolute(value) or FileAccess.file_exists(value)):
 							if !x.draw.is_connected(_update_draw):
 								x.draw.connect(_update_draw.bind(x))
-							_explore(_root)
+							_update_draw(x)
 							continue
 				elif value is String:
 					if FileAccess.file_exists(value):
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
-							_explore(_root)
+						_update_draw(x)
 						continue
 				elif value is RefCounted:
 					if value.get(&"_saved_path") is String:
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
-						_tabby_explore(_root)
+						_update_draw(x)
 						continue
 		elif x is ItemList:
 			if !x.draw.is_connected(_update_draw):
 				x.draw.connect(_update_draw.bind(x))
 			if x.item_count > 0:
-				var color : Color = x.get_item_custom_fg_color(0)
-				if color != Color.GRAY:
-					x.set_item_custom_fg_color(0, Color.GRAY)
-					var m : Variant = x.get_item_metadata(0)
-					if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
-						if !x.draw.is_connected(_update_draw):
-							x.draw.connect(_update_draw.bind(x))
-						for y : int in x.item_count:
-							var path : Variant = x.get_item_metadata(y)
-							if path is String:
-								if _buffer.has(path):
-									var texture : Texture2D = _get_item_texture(_buffer[path])
-									x.set_item_icon(y, texture)
-								elif path.get_extension().is_empty():
-									path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
-									if _buffer.has(path):
-										var texture : Texture2D = _get_item_texture(_buffer[path])
-										x.set_item_icon(y, texture)
-					elif m is Dictionary and m.has("path"):
-						if !x.draw.is_connected(_update_draw):
-							x.draw.connect(_update_draw.bind(x))
-						for y : int in x.item_count:
-							var data : Variant = x.get_item_metadata(y)
-							if data is Dictionary and data.has("path"):
-								var path : String = data["path"]
-								if path.get_extension().is_empty():
-									path = path.path_join("")
-								if _buffer.has(path):
-									var texture : Texture2D = _get_item_texture(_buffer[path])
-									x.set_item_icon(y, texture)
-					else:
-						if !x.draw.is_connected(_update_draw):
-							x.draw.connect(_update_draw.bind(x))
-						continue
-						_ref_buffer.erase(x)
-						if is_instance_valid(x):
-							if x is Control:
-								if x.has_signal(&"draw"):
-									if x.draw.is_connected(_update_draw):
-										x.draw.disconnect(_update_draw)
+				var m : Variant = x.get_item_metadata(0)
+				if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
+					if !x.draw.is_connected(_update_draw):
+						x.draw.connect(_update_draw.bind(x))
+					_update_draw(x)
+				elif m is Dictionary and m.has("path"):
+					if !x.draw.is_connected(_update_draw):
+						x.draw.connect(_update_draw.bind(x))
+					_update_draw(x)
+				else:
+					if !x.draw.is_connected(_update_draw):
+						x.draw.connect(_update_draw.bind(x))
+					#continue
+					#_ref_buffer.erase(x)
+					#if is_instance_valid(x):
+						#if x is Control:
+							#if x.has_signal(&"draw"):
+								#if x.draw.is_connected(_update_draw):
+									#x.draw.disconnect(_update_draw)
 			continue
-		continue
-		_ref_buffer.erase(x)
-		if is_instance_valid(x):
-			if x is Control:
-				if x.has_signal(&"draw"):
-					if x.draw.is_connected(_def_update):
-						x.draw.disconnect(_def_update)
+		#continue
+		#_ref_buffer.erase(x)
+		#if is_instance_valid(x):
+			#if x is Control:
+				#if x.has_signal(&"draw"):
+					#if x.draw.is_connected(_def_update):
+						#x.draw.disconnect(_def_update)
 		
 	set_deferred(&"_busy", false)
 
@@ -399,9 +379,7 @@ func _ready() -> void:
 	fs.filesystem_changed.connect(_def_update)
 
 	_def_update()
-
-
-var _enable_icons_on_split : bool = true
+#var _enable_icons_on_split : bool = true
 
 func _on_child(n : Node) -> void:
 	if n is Tree:
@@ -428,21 +406,6 @@ func _enter_tree() -> void:
 	var vp : Viewport = Engine.get_main_loop().root
 	vp.focus_entered.connect(_on_wnd)
 	vp.focus_exited.connect(_out_wnd)
-	
-	var editor : EditorSettings = EditorInterface.get_editor_settings()
-	if editor:
-		editor.settings_changed.connect(_on_change_settings)
-		if !editor.has_setting("plugin/fancy_folder_icons/enable_icons_on_split"):
-			editor.set_setting("plugin/fancy_folder_icons/enable_icons_on_split", true)
-		else:
-			_enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
-
-func _on_change_settings() -> void:
-	var editor : EditorSettings = EditorInterface.get_editor_settings()
-	if editor:
-		var settings : PackedStringArray = editor.get_changed_settings()
-		if "plugin/fancy_folder_icons/enable_icons_on_split" in settings:
-			_enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
 			
 func _exit_tree() -> void:
 	if is_instance_valid(_popup):
@@ -472,7 +435,7 @@ func _exit_tree() -> void:
 
 	var editor : EditorSettings = EditorInterface.get_editor_settings()
 	if editor:
-		editor.settings_changed.disconnect(_on_change_settings)
+		editor.settings_changed.disconnect(_on_changes)
 	
 
 	#region user_dat
