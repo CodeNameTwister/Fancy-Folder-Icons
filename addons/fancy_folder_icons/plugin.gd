@@ -29,10 +29,10 @@ func _on_changes() -> void:
 	var editor : EditorSettings = EditorInterface.get_editor_settings()
 	if editor:
 		var packed : PackedStringArray = editor.get_changed_settings()
-		if "plugin/fancy_folder_icons/saved_path" in packed:
-			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/saved_path")		
+		if "plugin/fancy_folder_icons/save_location" in packed:
+			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/save_location")		
 			if new_path.is_empty():
-				editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+				editor.set_setting("plugin/fancy_folder_icons/save_location", DOT_USER)
 			else:
 				DOT_USER = new_path
 			_setup(false)
@@ -40,12 +40,12 @@ func _on_changes() -> void:
 func _init() -> void:
 	var editor : EditorSettings = EditorInterface.get_editor_settings()
 	if editor:
-		if !editor.has_setting("plugin/fancy_folder_icons/saved_path"):
-			editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+		if !editor.has_setting("plugin/fancy_folder_icons/save_location"):
+			editor.set_setting("plugin/fancy_folder_icons/save_location", DOT_USER)
 		else:
-			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/saved_path")		
+			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/save_location")		
 			if new_path.is_empty():
-				editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+				editor.set_setting("plugin/fancy_folder_icons/save_location", DOT_USER)
 			else:
 				DOT_USER = new_path
 		editor.settings_changed.connect(_on_changes)
