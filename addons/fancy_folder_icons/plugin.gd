@@ -7,7 +7,7 @@ extends EditorPlugin
 #	https://github.com/CodeNameTwister/Fancy-Folder-Icons
 #	author:	"Twister"
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-const DOT_USER : String = "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat"
+var DOT_USER : String = "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat"
 
 var _buffer : Dictionary = {}
 var _tree : Tree = null
@@ -24,16 +24,46 @@ var _ref_buffer : Dictionary = {}
 
 func get_buffer() -> Dictionary:
 	return _buffer
+	
+func _on_changes() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		var packed : PackedStringArray = editor.get_changed_settings()
+		if "plugin/fancy_folder_icons/saved_path" in packed:
+			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/saved_path")		
+			if new_path.is_empty():
+				editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+			else:
+				DOT_USER = new_path
+			_setup(false)
 
-func _setup() -> void:
+func _init() -> void:
+	var editor : EditorSettings = EditorInterface.get_editor_settings()
+	if editor:
+		if !editor.has_setting("plugin/fancy_folder_icons/saved_path"):
+			editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+		else:
+			var new_path : String = editor.get_setting("plugin/fancy_folder_icons/saved_path")		
+			if new_path.is_empty():
+				editor.set_setting("plugin/fancy_folder_icons/saved_path", DOT_USER)
+			else:
+				DOT_USER = new_path
+		editor.changed.connect(_on_changes)
+
+func _setup(load_buffer : bool = true) -> void:
 	var dir : String = DOT_USER.get_base_dir()
 	if !DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
 		return
-	if !FileAccess.file_exists(dir.path_join(".gdignore")):
-		var file : FileAccess = FileAccess.open(dir.path_join(".gdignore"), FileAccess.WRITE)
-		file.store_string("Fancy Folder Icons Saved Folder")
-		file.close()	
+	if DOT_USER != "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat":
+		#(?) Do not ignore a possible important folder.
+		if !FileAccess.file_exists(dir.path_join(".gdignore")):
+			var file : FileAccess = FileAccess.open(dir.path_join(".gdignore"), FileAccess.WRITE)
+			file.store_string("Fancy Folder Icons Saved Folder")
+			file.close()	
+		
+	if !load_buffer:
+		return
 		
 	if !FileAccess.file_exists(DOT_USER):
 		if FileAccess.file_exists("user://editor/fancy_folder_icons.dat"):
@@ -152,9 +182,9 @@ func _update_draw(x : Variant) -> void:
 								x.draw.disconnect(_update_draw)
 
 func update() -> void:
-	if _buffer.size() == 0:return
-	if _busy:return
-	if _tree == null:return
+	if _busy or _buffer.size() == 0 or _tree == null:
+		set_process(true)
+		return
 	_busy = true
 	for x : Variant in _ref_buffer.keys():
 		if !is_instance_valid(x):
@@ -165,7 +195,7 @@ func update() -> void:
 			if _root != null:
 				var child : TreeItem = _root.get_first_child()
 				if child == null or child.get_custom_color(0) == Color.GRAY:
-					return
+					continue
 				child.set_custom_color(0, Color.GRAY)
 				var value : Variant = _root.get_metadata(0)
 				if value == null:
@@ -186,7 +216,7 @@ func update() -> void:
 					if value.get(&"_saved_path") is String:
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
-							_tabby_explore(_root)
+						_tabby_explore(_root)
 						continue
 		elif x is ItemList:
 			if !x.draw.is_connected(_update_draw):
@@ -225,6 +255,7 @@ func update() -> void:
 					else:
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
+						continue
 						_ref_buffer.erase(x)
 						if is_instance_valid(x):
 							if x is Control:
@@ -232,6 +263,7 @@ func update() -> void:
 									if x.draw.is_connected(_update_draw):
 										x.draw.disconnect(_update_draw)
 			continue
+		continue
 		_ref_buffer.erase(x)
 		if is_instance_valid(x):
 			if x is Control:
