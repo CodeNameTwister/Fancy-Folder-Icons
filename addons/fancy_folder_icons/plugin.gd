@@ -287,8 +287,8 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 		var path : String = tx.resource_path
 		
 		var mb : float = maxf(minf(tx_size.x, tx_size.y), size.x)
-		tx_size.x = minf(tx_size.x - maxf(mb - size.x, 0.0), size.x)
-		tx_size.y = minf(tx_size.y - maxf(mb - size.y, 0.0), size.y)
+		tx_size.x = maxf(minf(tx_size.x - maxf(mb - size.x, 0.0), size.x), 1.0)
+		tx_size.y = maxf(minf(tx_size.y - maxf(mb - size.y, 0.0), size.y), 1.0)
 		img.resize(int(tx_size.x), int(tx_size.y))
 		tx = ImageTexture.create_from_image(img)
 		
