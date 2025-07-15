@@ -55,7 +55,7 @@ func _setup(load_buffer : bool = true) -> void:
 	if !DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
 		return
-	if DOT_USER != "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat":
+	if DOT_USER == "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat":
 		#(?) Do not ignore a possible important folder.
 		if !FileAccess.file_exists(dir.path_join(".gdignore")):
 			var file : FileAccess = FileAccess.open(dir.path_join(".gdignore"), FileAccess.WRITE)
