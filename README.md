@@ -14,6 +14,14 @@ In the godot file system, press RMB (right click) on any folder/file you want to
 
 ![Preview](images/preview.png)
 
+### File System In Bottom (Split Mode)
+
+![Preview](images/preview3.png)
+
+### Open File Panel
+
+![Preview](images/preview4.png)
+
 ### Menu Preview
 
 ![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
