@@ -80,7 +80,7 @@ func _setup(load_buffer : bool = true) -> void:
 	_clear_buff(_buffer)
 	
 func _clear_buff(buffer : Dictionary) -> void:
-	for x : Variant in buffer:
+	for x : Variant in buffer.keys():
 		var value : Variant = buffer[x]
 		if x is String:
 			if !DirAccess.dir_exists_absolute(x) and !FileAccess.file_exists(x):
