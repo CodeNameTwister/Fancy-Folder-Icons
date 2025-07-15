@@ -180,13 +180,13 @@ func update() -> void:
 					if FileAccess.file_exists(value):
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
-						_explore(_root)
+							_explore(_root)
 						continue
 				elif value is RefCounted:
 					if value.get(&"_saved_path") is String:
 						if !x.draw.is_connected(_update_draw):
 							x.draw.connect(_update_draw.bind(x))
-						_tabby_explore(_root)
+							_tabby_explore(_root)
 						continue
 		elif x is ItemList:
 			if !x.draw.is_connected(_update_draw):
@@ -286,10 +286,9 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 		var img : Image = tx.get_image()
 		var path : String = tx.resource_path
 		
-		var mb : float = maxf(maxf(tx_size.x, tx_size.y), size.x)
+		var mb : float = maxf(minf(tx_size.x, tx_size.y), size.x)
 		tx_size.x = minf(tx_size.x - maxf(mb - size.x, 0.0), size.x)
 		tx_size.y = minf(tx_size.y - maxf(mb - size.y, 0.0), size.y)
-		
 		img.resize(int(tx_size.x), int(tx_size.y))
 		tx = ImageTexture.create_from_image(img)
 		

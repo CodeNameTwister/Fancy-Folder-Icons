@@ -36,7 +36,7 @@ func _call_reorder(tx : Texture) -> void:
 
 func get_selected_texture() -> Texture2D:
 	return _selected
-
+#
 func select_texture(tx: Texture2D, path : String, modulate : Color = Color.WHITE) -> void:
 	_selected = null
 	_path = path
