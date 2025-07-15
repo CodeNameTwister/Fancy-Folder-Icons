@@ -30,6 +30,7 @@ In the godot file system, press RMB (right click) on any folder/file you want to
 This section lists users who have contributed to improving the quality of this project.
 
 [@Lerpwave](https://github.com/Lerpwave)
+[@CamarataM](https://github.com/CamarataM)
 
 #
 
