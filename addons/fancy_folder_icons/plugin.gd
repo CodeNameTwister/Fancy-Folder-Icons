@@ -16,8 +16,6 @@ var _busy : bool = false
 var _menu_service : EditorContextMenuPlugin = null
 var _popup : Window = null
 
-#var _docky : Docky = null
-
 var size : Vector2 = Vector2(12.0, 12.0)
 
 var _is_saving : bool = false
@@ -26,72 +24,6 @@ var _ref_buffer : Dictionary = {}
 
 func get_buffer() -> Dictionary:
 	return _buffer
-#
-#class Docky extends RefCounted:
-	#var drawing : bool = false
-	#var dock : ItemList = null
-	#
-	#var plugin : Object = null
-	#
-	#func _init(set_plugin : Object) -> void:
-		#plugin = set_plugin
-	#
-	#func update_icons() -> void:
-		#if !dock:
-			#return
-		#var buffer : Dictionary = plugin.get_buffer()
-		#var mt : Dictionary = {}
-		#
-		#for x : int in dock.item_count:
-			#var data : String = str(dock.get_item_metadata(x))
-			#mt[data] = [x, 0]
-			#
-		#for key : String in buffer.keys():
-			#for m : String in mt.keys():
-				#if m == key:
-					#mt[m][1] = m.length() + 1
-					#var image : Texture2D = buffer[key]
-					#var path : String = image.resource_path
-					#if path.is_empty() and image.has_meta(&"path"):
-						#path = image.get_meta(&"path")
-					#if FileAccess.file_exists(path):
-						#dock.set_item_icon(mt[m][0], load(path))
-					#else:
-						#dock.set_item_icon(mt[m][0], buffer[key])
-					#
-				#elif m.get_extension().is_empty() and m.begins_with(key):
-					#var l : int = key.length()
-					#if mt[m][1] < l:
-						#mt[m][1] = l
-						#var image : Texture2D = buffer[key]
-						#var path : String = image.resource_path
-						#if path.is_empty() and image.has_meta(&"path"):
-							#path = image.get_meta(&"path")
-						#if FileAccess.file_exists(path):
-							#dock.set_item_icon(mt[m][0], load(path))
-						#else:
-							#dock.set_item_icon(mt[m][0], buffer[key])
-		#_dispose.call_deferred()
-		#return
-		#
-	#func _dispose() -> void:
-		#var o : Variant = self
-		#for __ : int in range(2):
-			#await Engine.get_main_loop().process_frame
-		#if is_instance_valid(o):
-			#o.set_deferred(&"drawing", false)
-	#
-	#func _on_change() -> void:
-		#if drawing:
-			#return
-		#drawing = true
-		#update_icons.call_deferred()
-	#
-	#func update(new_dock : ItemList) -> void:
-		#dock = new_dock
-		#
-		#if !dock.draw.is_connected(_on_change):
-			#dock.draw.connect(_on_change)
 
 func _setup() -> void:
 	var dir : String = DOT_USER.get_base_dir()
@@ -156,6 +88,69 @@ func _remove_callback(path : String) -> void:
 func _def_update() -> void:
 	set_process(true)
 
+func _update_draw(x : Variant) -> void:
+	for __ : int in range(1):
+		var tree : SceneTree = get_tree()
+		if !is_instance_valid(tree):
+			return
+		await tree.process_frame
+		
+	if is_instance_valid(x):
+		if x is Tree:
+			var _root: TreeItem = x.get_root()
+			if _root != null:
+				var child : TreeItem = _root.get_first_child()
+				if  child == null:
+					return
+				if child == null or child.get_custom_color(0) == Color.GRAY:
+					return
+				child.set_custom_color(0, Color.GRAY)
+				var value : Variant = _root.get_metadata(0)
+				if value == null:
+					if child:
+						value = child.get_metadata(0)
+						if value is String and (value == "Favorites" or DirAccess.dir_exists_absolute(value) or FileAccess.file_exists(value)):
+							_explore(_root)
+							return
+				elif value is String:
+					if FileAccess.file_exists(value):
+						_explore(_root)
+				elif value is RefCounted:
+					if value.get(&"_saved_path") is String:
+						_tabby_explore(_root)
+		elif x is ItemList:
+			if x.item_count > 0:
+				var color : Color = x.get_item_custom_fg_color(0)
+				if color != Color.GRAY:
+					x.set_item_custom_fg_color(0, Color.GRAY)
+					var m : Variant = x.get_item_metadata(0)
+					if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
+						for y : int in x.item_count:
+							var path : Variant = x.get_item_metadata(y)
+							if path is String:
+								if _buffer.has(path):
+									var texture : Texture2D = _get_item_texture(_buffer[path])
+									x.set_item_icon(y, texture)
+								elif path.get_extension().is_empty():
+									path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+									if _buffer.has(path):
+										var texture : Texture2D = _get_item_texture(_buffer[path])
+										x.set_item_icon(y, texture)
+					elif m is Dictionary and m.has("path"):
+						for y : int in x.item_count:
+							var data : Variant = x.get_item_metadata(y)
+							if data is Dictionary and data.has("path"):
+								var path : String = data["path"]
+								if path.get_extension().is_empty():
+									path = path.path_join("")
+								if _buffer.has(path):
+									var texture : Texture2D = _get_item_texture(_buffer[path])
+									x.set_item_icon(y, texture)
+					else:
+						if x is Control:
+							if x.draw.is_connected(_update_draw):
+								x.draw.disconnect(_update_draw)
+
 func update() -> void:
 	if _buffer.size() == 0:return
 	if _busy:return
@@ -169,41 +164,41 @@ func update() -> void:
 			var _root: TreeItem = x.get_root()
 			if _root != null:
 				var child : TreeItem = _root.get_first_child()
-				if  child == null or child == _ref_buffer[x]:
-					continue
-				_ref_buffer[x] = child
+				if child == null or child.get_custom_color(0) == Color.GRAY:
+					return
+				child.set_custom_color(0, Color.GRAY)
 				var value : Variant = _root.get_metadata(0)
 				if value == null:
 					if child:
 						value = child.get_metadata(0)
 						if value is String and (value == "Favorites" or DirAccess.dir_exists_absolute(value) or FileAccess.file_exists(value)):
-							if !x.draw.is_connected(_def_update):
-								x.draw.connect(_def_update)
+							if !x.draw.is_connected(_update_draw):
+								x.draw.connect(_update_draw.bind(x))
 							_explore(_root)
 							continue
 				elif value is String:
 					if FileAccess.file_exists(value):
-						if !x.draw.is_connected(_def_update):
-							x.draw.connect(_def_update)
+						if !x.draw.is_connected(_update_draw):
+							x.draw.connect(_update_draw.bind(x))
 						_explore(_root)
 						continue
 				elif value is RefCounted:
 					if value.get(&"_saved_path") is String:
-						if !x.draw.is_connected(_def_update):
-							x.draw.connect(_def_update)
+						if !x.draw.is_connected(_update_draw):
+							x.draw.connect(_update_draw.bind(x))
 						_tabby_explore(_root)
 						continue
 		elif x is ItemList:
-			if !x.draw.is_connected(_def_update):
-				x.draw.connect(_def_update)
+			if !x.draw.is_connected(_update_draw):
+				x.draw.connect(_update_draw.bind(x))
 			if x.item_count > 0:
 				var color : Color = x.get_item_custom_fg_color(0)
 				if color != Color.GRAY:
 					x.set_item_custom_fg_color(0, Color.GRAY)
 					var m : Variant = x.get_item_metadata(0)
 					if m is String and (DirAccess.dir_exists_absolute(m) or FileAccess.file_exists(m)):
-						if !x.draw.is_connected(_def_update):
-							x.draw.connect(_def_update)
+						if !x.draw.is_connected(_update_draw):
+							x.draw.connect(_update_draw.bind(x))
 						for y : int in x.item_count:
 							var path : Variant = x.get_item_metadata(y)
 							if path is String:
@@ -216,8 +211,8 @@ func update() -> void:
 										var texture : Texture2D = _get_item_texture(_buffer[path])
 										x.set_item_icon(y, texture)
 					elif m is Dictionary and m.has("path"):
-						if !x.draw.is_connected(_def_update):
-							x.draw.connect(_def_update)
+						if !x.draw.is_connected(_update_draw):
+							x.draw.connect(_update_draw.bind(x))
 						for y : int in x.item_count:
 							var data : Variant = x.get_item_metadata(y)
 							if data is Dictionary and data.has("path"):
@@ -228,11 +223,21 @@ func update() -> void:
 									var texture : Texture2D = _get_item_texture(_buffer[path])
 									x.set_item_icon(y, texture)
 					else:
-						if !x.draw.is_connected(_def_update):
-							x.draw.connect(_def_update)
+						if !x.draw.is_connected(_update_draw):
+							x.draw.connect(_update_draw.bind(x))
 						_ref_buffer.erase(x)
+						if is_instance_valid(x):
+							if x is Control:
+								if x.has_signal(&"draw"):
+									if x.draw.is_connected(_update_draw):
+										x.draw.disconnect(_update_draw)
 			continue
 		_ref_buffer.erase(x)
+		if is_instance_valid(x):
+			if x is Control:
+				if x.has_signal(&"draw"):
+					if x.draw.is_connected(_def_update):
+						x.draw.disconnect(_def_update)
 		
 	set_deferred(&"_busy", false)
 
@@ -240,8 +245,8 @@ func _is_tabby(tree : Tree, root : TreeItem) -> bool:
 	var meta : Variant = root.get_metadata(0)
 	if meta is RefCounted:
 		if meta.get(&"_saved_path") is String:
-			if !tree.draw.is_connected(_def_update):
-				tree.draw.connect(_def_update)
+			if !tree.draw.is_connected(_update_draw):
+				tree.draw.connect(_update_draw.bind(tree))
 			return true
 	return false
 
@@ -309,8 +314,11 @@ func _on_select_texture(tx : Texture2D, texture_path : String, _modulate : Color
 		
 	for p : String in paths:
 		_buffer[p] = tx
+	
 	_def_update()
 	save_queue()
+	
+	EditorInterface.get_resource_filesystem().scan()
 
 func save_queue() -> void:
 	if _is_saving:
@@ -347,8 +355,8 @@ func _ready() -> void:
 	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
 	_n(dock)
 
-	if _tree.draw.is_connected(_def_update):
-		_tree.draw.connect(_def_update)
+	if _tree.draw.is_connected(_update_draw):
+		_tree.draw.connect(_update_draw.bind(_tree))
 
 	add_context_menu_plugin(EditorContextMenuPlugin.CONTEXT_SLOT_FILESYSTEM, _menu_service)
 

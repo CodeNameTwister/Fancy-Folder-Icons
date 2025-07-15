@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://xar82qpavxyl"]
+[gd_scene load_steps=21 format=3 uid="uid://xar82qpavxyl"]
 
 [ext_resource type="Texture2D" uid="uid://cdofmex30bl3q" path="res://addons/fancy_folder_icons/samples/Folder.svg" id="1_wg60l"]
 [ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://cg0f55ae61sx1" path="res://addons/fancy_folder_icons/samples/cancel.png" id="10_i8b63"]
 [ext_resource type="Texture2D" uid="uid://bhe0xeqkf4qax" path="res://addons/fancy_folder_icons/samples/music.png" id="12_e2bde"]
 [ext_resource type="Texture2D" uid="uid://rcwqv0vi0a6g" path="res://addons/fancy_folder_icons/samples/movie.png" id="14_nn354"]
+[ext_resource type="Texture2D" uid="uid://1p35vp6yh0ys" path="res://addons/fancy_folder_icons/samples/heart.png" id="15_ksxvb"]
 [ext_resource type="Texture2D" uid="uid://ccc6j3io7iw47" path="res://addons/fancy_folder_icons/samples/warning.png" id="16_c2fc4"]
 
 [sub_resource type="Gradient" id="Gradient_5niax"]
@@ -213,7 +214,7 @@ custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource("14_nn354")
+texture = ExtResource("15_ksxvb")
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("5_ksxvb")
