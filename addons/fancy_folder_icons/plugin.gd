@@ -207,7 +207,6 @@ func _update_draw(x : Variant) -> void:
 
 func update() -> void:
 	if _busy or _buffer.size() == 0 or _tree == null:
-		set_process(true)
 		return
 	_busy = true
 	for x : Variant in _ref_buffer.keys():
