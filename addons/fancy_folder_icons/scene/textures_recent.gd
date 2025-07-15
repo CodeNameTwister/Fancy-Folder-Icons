@@ -1,5 +1,5 @@
 @tool
-extends HBoxContainer
+extends Control
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #	Fancy Folder Icons
 #

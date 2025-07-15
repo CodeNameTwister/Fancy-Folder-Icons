@@ -15,22 +15,14 @@ var path : String = ""
 
 func _set(property: StringName, value: Variant) -> bool:
 	if property == &"texture":
+		set_meta(&"path", null)
 		if null != value:
 			if value is Resource:
 				var new_path : String = (value as Resource).resource_path
 				if !new_path.is_empty():
 					path = new_path
-			
 			if value is Texture2D:
-				var image_size : Vector2 = Vector2(12.0, 12.0)
-				if owner and owner.has_method(&"get_icon_size"):
-					image_size = owner.call(&"get_icon_size")
-				if value.get_size() != image_size:
-					var img : Image = value.get_image()
-					img.resize(int(image_size.x), int(image_size.y), Image.INTERPOLATE_NEAREST)
-					texture = ImageTexture.create_from_image(img)
-					#texture.resource_path = value.resource_path #No Cache Override
-					return true
+				value.set_meta(&"path", value.resource_path)
 		if path.is_empty():
 			path = str(get_index())
 		texture = value
@@ -44,13 +36,14 @@ func _ready() -> void:
 		texture = null
 	else:
 		path = texture.resource_path
+		set_meta(&"path", path)
 
 func _on_gui(i : InputEvent) -> void:
 	if i is InputEventMouseButton:
 		if i.button_index == 1 and i.pressed:
 			if texture == null:
 				return
-			owner.select_texture(texture, path)
+			owner.select_texture(texture, path, modulate)
 
 func enable() -> void:
 	set_process(true)

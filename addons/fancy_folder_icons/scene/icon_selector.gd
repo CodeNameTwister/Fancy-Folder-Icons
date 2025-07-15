@@ -13,7 +13,7 @@ extends Window
 @export var timer : Timer
 
 @warning_ignore("unused_signal")
-signal on_set_texture(new_tx : Texture, path : String)
+signal on_set_texture(new_tx : Texture, path : String, color : Color)
 @warning_ignore("unused_signal")
 signal on_reset_texture()
 
@@ -21,6 +21,7 @@ signal enable_accept_changes_button(e : bool)
 
 var _selected : Texture2D = null
 var _path : String = ""
+var _color : Color = Color.WHITE
 
 var plugin : Object = null
 
@@ -33,9 +34,13 @@ func _call_reorder(tx : Texture) -> void:
 	if texture_container:
 		texture_container.reorder(tx)
 
-func select_texture(tx: Texture2D, path : String) -> void:
+func get_selected_texture() -> Texture2D:
+	return _selected
+
+func select_texture(tx: Texture2D, path : String, modulate : Color = Color.WHITE) -> void:
 	_selected = null
 	_path = path
+	_color = modulate
 	if tx:
 		line_edit.text = path
 		_selected = tx
@@ -46,7 +51,7 @@ func select_texture(tx: Texture2D, path : String) -> void:
 
 func accept_changes() -> void:
 	_call_reorder(_selected)
-	on_set_texture.emit(_selected, _path)
+	on_set_texture.emit(_selected, _path, _color)
 	hide.call_deferred()
 
 func _ready() -> void:

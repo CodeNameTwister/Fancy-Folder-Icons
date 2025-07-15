@@ -1,22 +1,21 @@
-[gd_scene load_steps=21 format=3 uid="uid://xar82qpavxyl"]
+[gd_scene load_steps=20 format=3 uid="uid://xar82qpavxyl"]
 
 [ext_resource type="Texture2D" uid="uid://cdofmex30bl3q" path="res://addons/fancy_folder_icons/samples/Folder.svg" id="1_wg60l"]
 [ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
 [ext_resource type="Script" uid="uid://bgqshjvc1g8kv" path="res://addons/fancy_folder_icons/scene/textures_recent.gd" id="3_5niax"]
 [ext_resource type="Script" uid="uid://up3jia7nmthd" path="res://addons/fancy_folder_icons/scene/accept.gd" id="4_3dosb"]
-[ext_resource type="Texture2D" uid="uid://bnfvsykjjsuf8" path="res://addons/fancy_folder_icons/samples/cd.png" id="4_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://c07i5lwi1wx52" path="res://addons/fancy_folder_icons/samples/blog.png" id="4_s3hb1"]
 [ext_resource type="Script" uid="uid://b7q0u066xrji6" path="res://addons/fancy_folder_icons/scene/texture_select.gd" id="5_ksxvb"]
-[ext_resource type="Texture2D" uid="uid://du7fun3cfkme4" path="res://addons/fancy_folder_icons/samples/database.png" id="5_nn354"]
-[ext_resource type="Texture2D" uid="uid://drkyf0wyc5ar8" path="res://addons/fancy_folder_icons/samples/heart.png" id="6_ksxvb"]
-[ext_resource type="Texture2D" uid="uid://b3p3r3nqvqc6f" path="res://addons/fancy_folder_icons/samples/down.png" id="7_i8b63"]
-[ext_resource type="Texture2D" uid="uid://11a0a61yelrx" path="res://addons/fancy_folder_icons/samples/danger.png" id="7_ksxvb"]
-[ext_resource type="Texture2D" uid="uid://bqgh3qddsbjk3" path="res://addons/fancy_folder_icons/samples/good.png" id="8_c2fc4"]
-[ext_resource type="Texture2D" uid="uid://ce7vxbo46fr2r" path="res://addons/fancy_folder_icons/samples/help.png" id="9_wd0cm"]
-[ext_resource type="Texture2D" uid="uid://bnly2k6dpnygx" path="res://addons/fancy_folder_icons/samples/movie.png" id="10_e2bde"]
-[ext_resource type="Texture2D" uid="uid://det6omavcow6q" path="res://addons/fancy_folder_icons/samples/music.png" id="11_swef7"]
-[ext_resource type="Texture2D" uid="uid://dm7xog3v038c7" path="res://addons/fancy_folder_icons/samples/next.png" id="12_s3hb1"]
-[ext_resource type="Texture2D" uid="uid://dmpj5ely63fu2" path="res://addons/fancy_folder_icons/samples/previous.png" id="13_ri0hx"]
-[ext_resource type="Texture2D" uid="uid://camm6l6pbejlj" path="res://addons/fancy_folder_icons/samples/delete.png" id="16_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://1wht64drftb0" path="res://addons/fancy_folder_icons/samples/cd.png" id="5_nwwdh"]
+[ext_resource type="Texture2D" uid="uid://dql1acxfd6yrd" path="res://addons/fancy_folder_icons/samples/danger.png" id="6_tiswq"]
+[ext_resource type="Texture2D" uid="uid://b68pm3045j51i" path="res://addons/fancy_folder_icons/samples/good.png" id="7_nn354"]
+[ext_resource type="Texture2D" uid="uid://d0g5rcjw5k58r" path="res://addons/fancy_folder_icons/samples/down.png" id="8_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://d25e8idgct6n3" path="res://addons/fancy_folder_icons/samples/database.png" id="9_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://vd35ns2md6ke" path="res://addons/fancy_folder_icons/samples/help.png" id="10_c2fc4"]
+[ext_resource type="Texture2D" uid="uid://cg0f55ae61sx1" path="res://addons/fancy_folder_icons/samples/cancel.png" id="10_i8b63"]
+[ext_resource type="Texture2D" uid="uid://bhe0xeqkf4qax" path="res://addons/fancy_folder_icons/samples/music.png" id="12_e2bde"]
+[ext_resource type="Texture2D" uid="uid://rcwqv0vi0a6g" path="res://addons/fancy_folder_icons/samples/movie.png" id="14_nn354"]
+[ext_resource type="Texture2D" uid="uid://ccc6j3io7iw47" path="res://addons/fancy_folder_icons/samples/warning.png" id="16_c2fc4"]
 
 [sub_resource type="Gradient" id="Gradient_5niax"]
 offsets = PackedFloat32Array(0.570312, 1)
@@ -31,14 +30,13 @@ fill_from = Vector2(0.5, 0.5)
 texture = SubResource("GradientTexture2D_5fg00")
 
 [node name="IconSelector" type="Window" node_paths=PackedStringArray("texture_container", "line_edit", "file_dialog", "timer")]
-oversampling_override = 1.0
 title = "Choose Icon"
 position = Vector2i(0, 36)
-size = Vector2i(520, 150)
+size = Vector2i(520, 200)
 transient = true
 exclusive = true
 script = ExtResource("1_yibo6")
-texture_container = NodePath("PanelContainer/Container/VC/HC")
+texture_container = NodePath("PanelContainer/Container/VC/HC/GridContainer")
 line_edit = NodePath("PanelContainer/Container/VC/file_explorer/LineEdit")
 file_dialog = NodePath("FileDialog")
 timer = NodePath("Timer")
@@ -85,110 +83,154 @@ editable = false
 
 [node name="HC" type="HBoxContainer" parent="PanelContainer/Container/VC"]
 layout_mode = 2
-size_flags_horizontal = 4
 size_flags_vertical = 0
-script = ExtResource("3_5niax")
 
 [node name="Label" type="Label" parent="PanelContainer/Container/VC/HC"]
 layout_mode = 2
+size_flags_vertical = 1
 text = "Recents:"
+horizontal_alignment = 2
 
-[node name="Texture0" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="GridContainer" type="GridContainer" parent="PanelContainer/Container/VC/HC"]
 layout_mode = 2
-texture = ExtResource("4_ksxvb")
+size_flags_horizontal = 3
+columns = 12
+script = ExtResource("3_5niax")
+
+[node name="Texture0" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("4_s3hb1")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture1" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture1" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("7_ksxvb")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("10_i8b63")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture2" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture2" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("8_c2fc4")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("5_nwwdh")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture3" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture3" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("7_i8b63")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("6_tiswq")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture4" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture4" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("6_ksxvb")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("9_ksxvb")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture5" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture5" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("9_wd0cm")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("8_ksxvb")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture6" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture6" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("10_e2bde")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("7_nn354")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture7" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture7" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("11_swef7")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("12_e2bde")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture8" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture8" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("12_s3hb1")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("10_c2fc4")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture9" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture9" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("13_ri0hx")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("14_nn354")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture10" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture10" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("5_nn354")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("14_nn354")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
 
-[node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC"]
-modulate = Color(0.6968878, 0.6968878, 0.6968878, 1)
-custom_minimum_size = Vector2(32, 32)
+[node name="Texture11" type="TextureRect" parent="PanelContainer/Container/VC/HC/GridContainer"]
+texture_filter = 2
+custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
-texture = ExtResource("16_ksxvb")
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("16_c2fc4")
 expand_mode = 1
-stretch_mode = 3
+stretch_mode = 5
 script = ExtResource("5_ksxvb")
+
+[node name="HSeparator" type="HSeparator" parent="PanelContainer/Container/VC"]
+layout_mode = 2
 
 [node name="container" type="HBoxContainer" parent="PanelContainer/Container/VC"]
 layout_mode = 2
@@ -219,6 +261,7 @@ dialog_hide_on_ok = true
 file_mode = 0
 
 [node name="Timer" type="Timer" parent="."]
+wait_time = 120.0
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="go_back_requested" from="." to="." method="_on_go_back_requested"]

@@ -23,7 +23,7 @@ func _popup_menu(paths: PackedStringArray) -> void:
 			add_context_menu_item("{0} {1}".format([_get_tr(translation,&"Custom"), _get_tr(translation,&"Icon")]).capitalize(), _on_pick_cmd.bind(paths), ICON)
 			break
 
-# v4.5.beta1.official [46c495ca2] Error, not receive arg0 values.
+# v4.5.beta1.official [46c495ca2] Error, not receive arg0 values.Add commentMore actions
 func _on_pick_cmd(arg0 : Variant, arg1_fallvar : Variant = null) -> void:
 	if arg0 is PackedStringArray and arg0.size() > 0:
 		iconize_paths.emit(arg0)
