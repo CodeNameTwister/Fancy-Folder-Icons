@@ -162,22 +162,44 @@ func _update_draw(x : Variant) -> void:
 										else:
 											x.set_item_icon(y, _get_item_texture(_buffer[path]))
 									elif path.get_extension().is_empty():
-										path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+										var tmp : String = path.path_join("")
+										if _buffer.has(tmp):
+											if x.max_columns == 1:
+												x.set_item_icon(y, _buffer[tmp])
+											else:
+												x.set_item_icon(y, _get_item_texture(_buffer[tmp]))
+										else:
+											path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+											if _buffer.has(path):
+												if x.max_columns == 1:
+													x.set_item_icon(y, _buffer[path])
+												else:
+													x.set_item_icon(y, _get_item_texture(_buffer[path]))
+						elif m is Dictionary and m.has("path"):
+							for y : int in x.item_count:
+								var data : Variant = x.get_item_metadata(y)
+								if data is Dictionary and data.has("path"):
+									var path : Variant = data["path"]
+									if path is String:
 										if _buffer.has(path):
 											if x.max_columns == 1:
 												x.set_item_icon(y, _buffer[path])
 											else:
 												x.set_item_icon(y, _get_item_texture(_buffer[path]))
-						elif m is Dictionary and m.has("path"):
-							for y : int in x.item_count:
-								var data : Variant = x.get_item_metadata(y)
-								if data is Dictionary and data.has("path"):
-									var path : String = data["path"]
-									if path.get_extension().is_empty():
-										path = path.path_join("")
-									if _buffer.has(path):
-										var texture : Texture2D = _get_item_texture(_buffer[path])
-										x.set_item_icon(y, texture)
+										elif path.get_extension().is_empty():
+											var tmp : String = path.path_join("")
+											if _buffer.has(tmp):
+												if x.max_columns == 1:
+													x.set_item_icon(y, _buffer[tmp])
+												else:
+													x.set_item_icon(y, _get_item_texture(_buffer[tmp]))
+											else:
+												path = path.substr(0, path.rfind("/", path.length()-2)).path_join("")
+												if _buffer.has(path):
+													if x.max_columns == 1:
+														x.set_item_icon(y, _buffer[path])
+													else:
+														x.set_item_icon(y, _get_item_texture(_buffer[path]))
 						else:
 							if x is Control:
 								if x.draw.is_connected(_update_draw):
