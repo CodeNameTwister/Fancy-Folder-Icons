@@ -10,28 +10,6 @@ Allows you to choose a custom icons for folders. _(also works with files)_
 
 # How Work
 
-In the godot file system, press RMB (right click) on any folder/file you want to **iconize** and select **Custom Icon** from the menu.
-
-### File System Preview
-
-![Preview](images/preview.png)
-
-### Menu Preview
-
-![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
-
-# Special Thanks 📜
-
-This section lists users who have contributed to improving the quality of this project.
-
-[@Lerpwave](https://github.com/Lerpwave)
-
-#
-
-Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
-
-[godot engine]: https://godotengine.org/
-
 instead of having to set a custom icon for each folder indevidually, the folders will be set using rules.
 
 ### Rules instructions
@@ -76,3 +54,23 @@ if one replace rule fails, if the file is not found, to match the errors are sav
 
 - add support for more than one \*\* per match rule
 - add support for test\* to mean folder starting with test
+
+### File System Preview
+
+![Preview](images/preview.png)
+
+### Menu Preview
+
+![MenuPreview](https://github.com/user-attachments/assets/1bf25cd1-505f-4090-b0ab-3abc58fe30f4)
+
+# Special Thanks 📜
+
+This section lists users who have contributed to improving the quality of this project.
+
+[@Lerpwave](https://github.com/Lerpwave)
+
+#
+
+Copyrights (c) CodeNameTwister. See [LICENSE](LICENSE) for details.
+
+[godot engine]: https://godotengine.org/
