@@ -46,8 +46,7 @@ class Docky extends RefCounted:
     plugin = set_plugin
 
   func update_icons() -> void:
-    if !dock:
-      return
+    if !dock: return
     var buffer: Dictionary = plugin.get_buffer()
     var mt: Dictionary = {}
     
@@ -87,8 +86,7 @@ class Docky extends RefCounted:
       o.set_deferred(&"drawing", false)
   
   func _on_change() -> void:
-    if drawing:
-      return
+    if drawing: return
     drawing = true
     update_icons.call_deferred()
   
@@ -181,12 +179,10 @@ func matches(key, item, retval):
     if splitItemIdx >= len(splitItem) or splitKeyIdx >= len(splitKey):
       # log.pp("len ", key, item, retval, "splitItemIdx ", splitItemIdx, "splitKeyIdx", splitKeyIdx)
       return false
-    if splitKey[splitKeyIdx] == splitItem[splitItemIdx]:
-      continue
+    if splitKey[splitKeyIdx] == splitItem[splitItemIdx]: continue
     if splitKey[splitKeyIdx][0] == '$':
       var num := int(splitKey[splitKeyIdx].substr(1, -1))
-      if num in itemrep:
-        continue
+      if num in itemrep: continue
     if splitKey[splitKeyIdx] == '**':
       var v = ""
       var extra = 1 + (len(splitItem) - len(splitKey))
@@ -282,8 +278,7 @@ func _on_select_texture(tx: Texture2D, texture_path: String, paths: PackedString
   save_queue()
 
 func save_queue() -> void:
-  if _is_saving:
-    return
+  if _is_saving: return
   _is_saving = true
   _quick_save.call_deferred()
 
@@ -355,6 +350,7 @@ func _enter_tree() -> void:
       editor.set_setting("plugin/fancy_folder_icons/enable_icons_on_split", true)
     else:
       _enable_icons_on_split = editor.get_setting("plugin/fancy_folder_icons/enable_icons_on_split")
+  ProjectSettings.set_setting("plugin/fancy_folder_icons/openRules", false)
   ProjectSettings.settings_changed.connect(_on_change_settings)
   var temp = JSON.parse_string(FileAccess.get_file_as_string(RULES_FILE))
   if FileAccess.file_exists(RULES_FILE):
@@ -365,7 +361,6 @@ func _enter_tree() -> void:
       textureAppliesToNestedFolders = temp.textureAppliesToNestedFolders
   ProjectSettings.set_setting("plugin/fancy_folder_icons/rules", rules)
   ProjectSettings.set_setting("plugin/fancy_folder_icons/textureAppliesToNestedFolders", textureAppliesToNestedFolders)
-  PROPERTY_HINT_TYPE_STRING
   var property_info = {
     "name": "plugin/fancy_folder_icons/rules",
     "type": TYPE_DICTIONARY,
@@ -389,6 +384,9 @@ func _on_change_settings() -> void:
   rules = ProjectSettings.get_setting("plugin/fancy_folder_icons/rules", {})
   textureAppliesToNestedFolders = ProjectSettings.get_setting("plugin/fancy_folder_icons/textureAppliesToNestedFolders", true)
   FileAccess.open(RULES_FILE, FileAccess.WRITE_READ).store_string(JSON.stringify({"rules": rules, "textureAppliesToNestedFolders": textureAppliesToNestedFolders}, "  "))
+  if ProjectSettings.get_setting("plugin/fancy_folder_icons/openRules", false):
+    ProjectSettings.set_setting("plugin/fancy_folder_icons/openRules", false)
+    OS.shell_open(ProjectSettings.globalize_path(RULES_FILE))
       
 func _exit_tree() -> void:
   if is_instance_valid(_popup):
