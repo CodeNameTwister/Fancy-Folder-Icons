@@ -29,6 +29,7 @@ var _scan_request : bool = false
 func scan() ->void:
 	if _scan_request:
 		return
+	_scan_request = true
 	var rf : EditorFileSystem = EditorInterface.get_resource_filesystem()
 	rf.scan()
 	set_deferred(&"_scan_request", false)
