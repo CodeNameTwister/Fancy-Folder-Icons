@@ -56,10 +56,20 @@ func _setup() -> void:
 		var append : Array[Texture2D] = []
 		for x : String in _icons:
 			if FileAccess.file_exists(x):
-				var r : Resource = ResourceLoader.load(x)
-				if r is Texture2D:
-					append.append(r)
-					if append.size() >= get_child_count():break
+				if ResourceLoader.exists(x):
+					var r : Resource = ResourceLoader.load(x)
+					if r is Texture2D:
+						append.append(r)
+						if append.size() >= get_child_count():break
+				else:
+					var image : Image = Image.load_from_file(x)
+					if is_instance_valid(image):
+						if image.is_compressed():
+							image.decompress()
+						var tx : Texture2D = ImageTexture.create_from_image(image)
+						if tx is Texture2D:
+							append.append(tx)
+							if append.size() >= get_child_count():break
 
 		if append.size() > 0:
 			var index : int = 0
