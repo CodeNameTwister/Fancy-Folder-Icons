@@ -32,11 +32,18 @@ func _set(property: StringName, value: Variant) -> bool:
 func _ready() -> void:
 	set_process(false)
 	gui_input.connect(_on_gui)
-	if texture.resource_path == null:
-		texture = null
+	# I prevent using UID because of some bugs sometimes, Maybe i'll lose my fear of UIDs in future versions of Godot.
+	path = "res://addons/fancy_folder_icons/samples/Folder.svg"
+	if is_instance_valid(texture):
+		if texture.resource_path == null:
+			texture = null
+		else:
+			path = texture.resource_path
 	else:
+		#Placeholder
+		texture = ResourceLoader.load("res://addons/fancy_folder_icons/samples/Folder.svg")
 		path = texture.resource_path
-		set_meta(&"path", path)
+	set_meta(&"path", path)
 
 func _on_gui(i : InputEvent) -> void:
 	if i is InputEventMouseButton:
