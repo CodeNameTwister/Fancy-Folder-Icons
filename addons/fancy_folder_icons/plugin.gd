@@ -9,18 +9,33 @@ extends EditorPlugin
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 var DOT_USER : String = "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat"
 
+
+var size : Vector2 = Vector2(12.0, 12.0) #ICON SIZE
+
+
 var _buffer : Dictionary = {}
-var _tree : Tree = null
+var _tree : Tree = null:
+	set(e):
+		_tree = e
 var _busy : bool = false
 
 var _menu_service : EditorContextMenuPlugin = null
 var _popup : Window = null
 
-var size : Vector2 = Vector2(12.0, 12.0)
+var _initialize : bool = false
 
 var _is_saving : bool = false
 
 var _ref_buffer : Dictionary = {}
+
+var _scan_request : bool = false
+
+func scan() ->void:
+	if _scan_request:
+		return
+	var rf : EditorFileSystem = EditorInterface.get_resource_filesystem()
+	rf.scan()
+	set_deferred(&"_scan_request", false)
 
 func get_buffer() -> Dictionary:
 	return _buffer
@@ -55,12 +70,12 @@ func _setup(load_buffer : bool = true) -> void:
 	if !DirAccess.dir_exists_absolute(dir):
 		DirAccess.make_dir_recursive_absolute(dir)
 		return
-	if DOT_USER == "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat":
+	#if DOT_USER == "res://addons/fancy_folder_icons/user/fancy_folder_icons.dat":
 		#(?) Do not ignore a possible important folder.
-		if !FileAccess.file_exists(dir.path_join(".gdignore")):
-			var file : FileAccess = FileAccess.open(dir.path_join(".gdignore"), FileAccess.WRITE)
-			file.store_string("Fancy Folder Icons Saved Folder")
-			file.close()	
+		#if !FileAccess.file_exists(dir.path_join(".gdignore")):
+			#var file : FileAccess = FileAccess.open(dir.path_join(".gdignore"), FileAccess.WRITE)
+			#file.store_string("Fancy Folder Icons Saved Folder")
+			#file.close()	
 		
 	if !load_buffer:
 		return
@@ -256,21 +271,7 @@ func update() -> void:
 				else:
 					if !x.draw.is_connected(_update_draw):
 						x.draw.connect(_update_draw.bind(x))
-					#continue
-					#_ref_buffer.erase(x)
-					#if is_instance_valid(x):
-						#if x is Control:
-							#if x.has_signal(&"draw"):
-								#if x.draw.is_connected(_update_draw):
-									#x.draw.disconnect(_update_draw)
 			continue
-		#continue
-		#_ref_buffer.erase(x)
-		#if is_instance_valid(x):
-			#if x is Control:
-				#if x.has_signal(&"draw"):
-					#if x.draw.is_connected(_def_update):
-						#x.draw.disconnect(_def_update)
 		
 	set_deferred(&"_busy", false)
 
@@ -325,6 +326,12 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 		var mb : float = maxf(minf(tx_size.x, tx_size.y), size.x)
 		tx_size.x = maxf(minf(tx_size.x - maxf(mb - size.x, 0.0), size.x), 1.0)
 		tx_size.y = maxf(minf(tx_size.y - maxf(mb - size.y, 0.0), size.y), 1.0)
+		
+		if tx_size.x < size.x and tx_size.y < size.y:
+			mb = maxf(tx_size.x, tx_size.y)
+			tx_size.x += size.x - mb
+			tx_size.y += size.y - mb
+		
 		img.resize(int(tx_size.x), int(tx_size.y))
 		tx = ImageTexture.create_from_image(img)
 		
@@ -333,11 +340,18 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 			var index : int = 0
 			var new_path : String = path + str(index) + ".png"
 			while FileAccess.file_exists(new_path):
+				#DUPLICATED
+				if ResourceLoader.exists(new_path):
+					var res : Resource = ResourceLoader.load(new_path)
+					if res is Texture and res == tx:
+						break
+				
 				index += 1
 				new_path = path + str(index) + ".png"
 			path = new_path
 			ResourceSaver.save(tx, path)
 			tx.resource_path = path
+			scan.call_deferred()
 		
 		tx.set_meta(&"path", path)
 	return tx
@@ -388,7 +402,9 @@ func _ready() -> void:
 	set_physics_process(false)
 	var dock : FileSystemDock = EditorInterface.get_file_system_dock()
 	var fs : EditorFileSystem = EditorInterface.get_resource_filesystem()
+	
 	_n(dock)
+	_setup()
 
 	if _tree.draw.is_connected(_update_draw):
 		_tree.draw.connect(_update_draw.bind(_tree))
@@ -418,8 +434,6 @@ func _on_child(n : Node) -> void:
 		_on_child(x)
 
 func _enter_tree() -> void:
-	_setup()
-
 	var root : Node = get_tree().root
 	get_tree().node_added.connect(_on_child)
 	_on_child(root)
@@ -499,6 +513,9 @@ func _n(n : Node) -> bool:
 			while t != null:
 				if t.get_metadata(0) == "res://":
 					_tree = n
+					var tx : Texture2D = t.get_icon(0)
+					if tx:
+						size = tx.get_size()
 					return true
 				t = t.get_next()
 	for x in n.get_children():
@@ -515,4 +532,15 @@ func _get_item_texture(texture : Texture2D) -> Texture2D:
 			path = texture.get_meta(&"path")
 		if path.get_extension() != "svg" and not FileAccess.file_exists(path):
 			return texture
+		
+		if !ResourceLoader.exists(path):
+			var image : Image = Image.load_from_file(path)
+			if is_instance_valid(image):
+				if image.is_compressed():
+					image.decompress()
+				var tx : Texture2D = ImageTexture.create_from_image(image)
+				if tx is Texture2D:
+					return tx
+			else:
+				return null
 		return ResourceLoader.load(path)
