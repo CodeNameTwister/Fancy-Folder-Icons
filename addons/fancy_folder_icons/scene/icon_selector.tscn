@@ -4,11 +4,11 @@
 [ext_resource type="Script" uid="uid://b8j4rmn2s6wq8" path="res://addons/fancy_folder_icons/scene/icon_selector.gd" id="1_yibo6"]
 [ext_resource type="Script" uid="uid://bgqshjvc1g8kv" path="res://addons/fancy_folder_icons/scene/textures_recent.gd" id="3_5niax"]
 [ext_resource type="Script" uid="uid://up3jia7nmthd" path="res://addons/fancy_folder_icons/scene/accept.gd" id="4_3dosb"]
-[ext_resource type="Texture2D" uid="uid://brfrp6r0fiwl2" path="res://addons/_Godot-IDE_/icon.svg" id="4_nn354"]
+[ext_resource type="Texture2D" uid="uid://ccc6j3io7iw47" path="res://addons/fancy_folder_icons/samples/warning.png" id="4_nn354"]
 [ext_resource type="Texture2D" uid="uid://c07i5lwi1wx52" path="res://addons/fancy_folder_icons/samples/blog.png" id="4_s3hb1"]
 [ext_resource type="Script" uid="uid://b7q0u066xrji6" path="res://addons/fancy_folder_icons/scene/texture_select.gd" id="5_ksxvb"]
 [ext_resource type="Texture2D" uid="uid://1wht64drftb0" path="res://addons/fancy_folder_icons/samples/cd.png" id="5_nwwdh"]
-[ext_resource type="Texture2D" uid="uid://b0fnq2fai0h5p" path="res://icodn_out.png" id="6_ksxvb"]
+[ext_resource type="Texture2D" uid="uid://b0fnq2fai0h5p" path="res://icodn_out.png" id="6_nn354"]
 [ext_resource type="Texture2D" uid="uid://dql1acxfd6yrd" path="res://addons/fancy_folder_icons/samples/danger.png" id="6_tiswq"]
 [ext_resource type="Texture2D" uid="uid://b68pm3045j51i" path="res://addons/fancy_folder_icons/samples/good.png" id="7_nn354"]
 [ext_resource type="Texture2D" uid="uid://d0g5rcjw5k58r" path="res://addons/fancy_folder_icons/samples/down.png" id="8_ksxvb"]
@@ -125,7 +125,7 @@ custom_minimum_size = Vector2(16, 16)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-texture = ExtResource("6_ksxvb")
+texture = ExtResource("6_nn354")
 expand_mode = 1
 stretch_mode = 5
 script = ExtResource("5_ksxvb")

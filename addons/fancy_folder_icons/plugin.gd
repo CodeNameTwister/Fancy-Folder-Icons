@@ -315,9 +315,12 @@ func _explore(item : TreeItem, texture : Texture2D = null, as_root : bool = true
 
 func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 	if tx.get_size() != size:
-		var tx_size : Vector2 = tx.get_size()
+		var tx_size : Vector2 = tx.get_size()		
 		var img : Image = tx.get_image()
 		var path : String = tx.resource_path
+		
+		if img.is_compressed():
+			img.decompress()
 		
 		var mb : float = maxf(minf(tx_size.x, tx_size.y), size.x)
 		tx_size.x = maxf(minf(tx_size.x - maxf(mb - size.x, 0.0), size.x), 1.0)
@@ -326,7 +329,7 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 		tx = ImageTexture.create_from_image(img)
 		
 		if path.is_empty() or !FileAccess.file_exists(path):
-			path = DOT_USER.path_join(str(key).get_file())
+			path = DOT_USER.get_base_dir().path_join(str(key).get_file())
 			var index : int = 0
 			var new_path : String = path + str(index) + ".png"
 			while FileAccess.file_exists(new_path):
