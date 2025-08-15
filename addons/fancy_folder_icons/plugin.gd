@@ -14,15 +14,11 @@ var size : Vector2 = Vector2(12.0, 12.0) #ICON SIZE
 
 
 var _buffer : Dictionary = {}
-var _tree : Tree = null:
-	set(e):
-		_tree = e
+var _tree : Tree = null
 var _busy : bool = false
 
 var _menu_service : EditorContextMenuPlugin = null
 var _popup : Window = null
-
-var _initialize : bool = false
 
 var _is_saving : bool = false
 
@@ -332,7 +328,7 @@ func _resize_to_explorer_icon(tx : Texture2D, key: Variant) -> Texture2D:
 			tx_size.x += size.x - mb
 			tx_size.y += size.y - mb
 		
-		img.resize(int(tx_size.x), int(tx_size.y))
+		img.resize(int(tx_size.x), int(tx_size.y), Image.INTERPOLATE_LANCZOS)
 		tx = ImageTexture.create_from_image(img)
 		
 		if path.is_empty() or !FileAccess.file_exists(path):
